@@ -1,8 +1,8 @@
 package backend
 
 import (
-	"Genkiyoho/ent"
-	"Genkiyoho/ent/user"
+	"Genkiyoho/backend/ent"
+	"Genkiyoho/backend/ent/user"
 	"context"
 	"log"
 	"strconv"
