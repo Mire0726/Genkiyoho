@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Mire0726/Genkiyoho/backend/server"
+	"server"
 )
 
 func main() {

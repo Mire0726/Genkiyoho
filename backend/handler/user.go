@@ -1,8 +1,10 @@
 package handler
 
 import (
-    "db"
+    //ここのインポートでエラーが出てる
+    "backend/db"
     "model"
+    //上エラー
     "encoding/json"
     "net/http"
 )
