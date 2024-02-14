@@ -1,4 +1,4 @@
-module github.com/Mire0726/Genkiyoho
+module github.com/Mire0726/Genkiyoho/backend
 
 go 1.21.5
 

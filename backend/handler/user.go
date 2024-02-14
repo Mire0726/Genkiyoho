@@ -1,8 +1,8 @@
 package handler
 
 import (
-    "backend/db"
-    "backend/model"
+    "db"
+    "model"
     "encoding/json"
     "net/http"
 )
