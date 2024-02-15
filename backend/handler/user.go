@@ -1,10 +1,9 @@
 package handler
 
 import (
-    //ここのインポートでエラーが出てる
-    "backend/db"
-    "model"
-    //上エラー
+    "github.com/Mire0726/Genkiyoho/backend/db"
+    "github.com/Mire0726/Genkiyoho/backend/model"
+    
     "encoding/json"
     "net/http"
 )

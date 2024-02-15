@@ -1,8 +1,7 @@
 package server
 
 import (
-    //インポートエラー
-    "../handler"
+    "github.com/Mire0726/Genkiyoho/backend/handler"
     "net/http"
 )
 
