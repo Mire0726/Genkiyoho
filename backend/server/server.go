@@ -1,8 +1,8 @@
 package server
 
 import (
-    "github.com/Mire0726/Genkiyoho/backend/handler"
-    "net/http"
+	"github.com/Mire0726/Genkiyoho/backend/handler"
+	"net/http"
 )
 
 func StartServer() {
