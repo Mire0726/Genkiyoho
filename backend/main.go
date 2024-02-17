@@ -2,10 +2,17 @@ package main
 
 import (
 	"github.com/Mire0726/Genkiyoho/backend/server"
+	"flag"
 )
 
 func main() {
-    server.StartServer()
+    	// コマンドライン引数の解析
+	var addr string
+	flag.StringVar(&addr, "addr", ":8080", "Address to listen on")
+	flag.Parse()
+
+	// サーバーの起動
+	server.Serve(addr)
 }
 
 

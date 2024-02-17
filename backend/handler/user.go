@@ -1,10 +1,11 @@
 package handler
 
 import (
-    "db"
-    "model"
-    "encoding/json"
-    "net/http"
+	"github.com/Mire0726/Genkiyoho/backend/db"
+	"github.com/Mire0726/Genkiyoho/backend/model"
+
+	"encoding/json"
+	"net/http"
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
