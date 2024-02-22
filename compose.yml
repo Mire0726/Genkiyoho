@@ -1,14 +1,5 @@
+version: '3'
 services:
-  # backend:
-  #   build:
-    #   context: ./backend/
-    #   dockerfile: Dockerfile
-    # ports:
-    #   - 8080:8080
-    # volumes:
-    #   - ./backend:/app 
-    # depends_on:
-    #   - db
   frontend:
     build:
       context: ./frontend/
@@ -22,10 +13,62 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER= postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=db
     volumes:
       - db-store:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "4000:80" 
+    depends_on:
+      - db
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    environment:
+      SWAGGER_JSON: /api/api-document.yaml
+    volumes:
+      - ./api-document.yaml:/api/api-document.yaml:ro
+    ports:
+      - "127.0.0.1:8081:8080"
 
 volumes:
   db-store:
+
+
+# version: '3'
+# services:
+#   frontend:
+#     build:
+#       context: ./frontend/
+#       dockerfile: Dockerfile
+#     volumes:
+#       - ./frontend:/app
+#     ports:
+#       - 3000:3000 
+#   db:
+#     image: "postgres:15-alpine"
+#     ports:
+#       - "5433:5432"
+#     environment:
+#       - POSTGRES_PASSWORD=password
+#       - POSTGRES_DB=db
+#     volumes:
+#       - db-store:/var/lib/postgresql/data
+#   swagger-ui:
+#     image: swaggerapi/swagger-ui:latest
+#     environment:
+#       SWAGGER_JSON: /api/api-document.yaml
+#     volumes:
+#       - ./api-document.yaml:/api/api-document.yaml:ro
+#     ports:
+#       - "127.0.0.1:8081:8080"
+
+      
+
+# volumes:
+#   db-store:
