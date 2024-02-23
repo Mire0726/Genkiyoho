@@ -31,10 +31,10 @@ func InsertUser(db *sql.DB, record *User) error {
         record.Name,
     )
     if err != nil {
-        log.Printf("ユーザーの登録に失敗しました: %v", err)
+        log.Printf("Error inserting user into database: %v", err) // ログ追加
         return err
     }
-    log.Println("ユーザーが正常に登録されました。")
+    log.Println("User successfully registered.") // 成功メッセージもログに記録
     return nil
 }
 

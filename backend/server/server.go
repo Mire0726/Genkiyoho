@@ -27,10 +27,6 @@ func Serve(addr string, db *sql.DB) {
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
-
-
-
-    // ルーティングの設定
     e.GET("/users", appHandler.HandleGetUser) // 修正: appHandlerを使用
     e.POST("/user/create", appHandler.HandleUserCreate)
 
