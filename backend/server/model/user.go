@@ -1,10 +1,10 @@
 package model
 
 import (
-    "database/sql"
-    "log"
-    "time"
-    // "github.com/Mire0726/Genkiyoho/backend/server/db"
+	"database/sql"
+	"log"
+	"time"
+	// "github.com/Mire0726/Genkiyoho/backend/server/db"
 )
 
 // User 構造体の定義（重複した定義を削除）
@@ -24,13 +24,11 @@ var db *sql.DB
 // InsertUser データベースにユーザレコードを登録する
 func InsertUser(db *sql.DB, record *User) error {
     _, err := db.Exec(
-        "INSERT INTO users (auth_token, email, password, name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
+        "INSERT INTO users (auth_token, email, password, name) VALUES (?, ?, ?, ?)",
         record.AuthToken,
         record.Email,
         record.Password,
         record.Name,
-        record.CreatedAt,
-        record.UpdatedAt,
     )
     if err != nil {
         log.Printf("ユーザーの登録に失敗しました: %v", err)
@@ -40,11 +38,11 @@ func InsertUser(db *sql.DB, record *User) error {
     return nil
 }
 
-// SelectUserByAuthToken 認証トークンに紐づくユーザ情報をデータベースから取得する
-func SelectUserByAuthToken(token string) (*User, error) {
-    var user User
 
-    query := `SELECT id, auth_token, email, password, name, created_at, updated_at FROM users WHERE auth_token = $1`
+// SelectUserByAuthToken 認証トークンに紐づくユーザ情報をデータベースから取得する
+func SelectUserByAuthToken(db *sql.DB, token string) (*User, error) {
+    var user User
+    query := `SELECT id, auth_token, email, password, name, created_at, updated_at FROM users WHERE auth_token = ?`
     err := db.QueryRow(query, token).Scan(&user.ID, &user.AuthToken, &user.Email, &user.Password, &user.Name, &user.CreatedAt, &user.UpdatedAt)
     if err != nil {
         if err == sql.ErrNoRows {
@@ -56,6 +54,7 @@ func SelectUserByAuthToken(token string) (*User, error) {
 
     return &user, nil
 }
+
 
 // GetAllUsers データベースから全ユーザを取得する
 func GetAllUsers() ([]User, error) {
