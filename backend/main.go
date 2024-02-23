@@ -1,18 +1,27 @@
 package main
 
 import (
-	"github.com/Mire0726/Genkiyoho/backend/server"
 	"flag"
+	"log"
+
+	"github.com/Mire0726/Genkiyoho/backend/server"
+	"github.com/Mire0726/Genkiyoho/backend/server/db"
 )
 
 func main() {
-    	// コマンドライン引数の解析
-	var addr string
-	flag.StringVar(&addr, "addr", ":8080", "Address to listen on")
-	flag.Parse()
+    // データベース接続の取得
+    conn, err := db.ConnectToDB()
+    if err != nil {
+        log.Fatalf("Failed to connect to database: %v", err)
+    }
+    defer conn.Close() // 関数終了時にデータベース接続を閉じる
 
-	// サーバーの起動
-	server.Serve(addr)
+    var addr string
+    flag.StringVar(&addr, "addr", ":8080", "Address to listen on")
+    flag.Parse()
+
+    // サーバーの起動
+    server.Serve(addr, conn)
 }
 
 
@@ -20,20 +29,26 @@ func main() {
 // package main
 
 // import (
-// 	"github.com/gin-gonic/gin"
+// 	"github.com/Mire0726/Genkiyoho/backend/server"
+// 	"flag"
+// 	"log"
+// 	"github.com/Mire0726/Genkiyoho/backend/server/db"
 // )
 
 // func main() {
-// 	//Ginフレームワークのデフォルトの設定を使用してルータを作成
-// 	router := gin.Default()
-	
-// 	// ルートハンドラの定義
-// 	router.GET("/", func(c *gin.Context) {
-// 		c.JSON(200, gin.H{
-// 			"message": "Hello, World!",
-// 		})
-// 	})
+//     // データベース接続の取得
+//     conn, err := db.ConnectToDB()
+//     if err != nil {
+//         log.Fatalf("Failed to connect to database: %v", err)
+//     }
+//     defer conn.Close() // 関数終了時にデータベース接続を閉じる
 
-// 	// サーバー起動
-// 	router.Run(":8080")
+// 	var addr string
+// 	flag.StringVar(&addr, "addr", ":8080", "Address to listen on")
+// 	flag.Parse()
+
+// 	// サーバーの起動
+// 	server.Serve(addr,conn)
 // }
+
+

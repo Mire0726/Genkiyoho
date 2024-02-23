@@ -1,14 +1,5 @@
+version: "3"
 services:
-  # backend:
-  #   build:
-    #   context: ./backend/
-    #   dockerfile: Dockerfile
-    # ports:
-    #   - 8080:8080
-    # volumes:
-    #   - ./backend:/app 
-    # depends_on:
-    #   - db
   frontend:
     build:
       context: ./frontend/
@@ -16,16 +7,34 @@ services:
     volumes:
       - ./frontend:/app
     ports:
-      - 3000:3000 
-  db:
-    image: "postgres:15-alpine"
-    ports:
-      - "5433:5432"
+      - 3000:3000
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=db
+      SWAGGER_JSON: /api/api-document.yaml
     volumes:
-      - db-store:/var/lib/postgresql/data
-
+      - ./api-document.yaml:/api/api-document.yaml:ro
+    ports:
+      - "127.0.0.1:8082:8080"
+  mysql:
+    image: mysql:8.0.27
+    platform: linux/amd64
+    ports:
+      - "3307:3306"
+    environment:
+      # MYSQL_DATABASE: db
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      - PMA_HOSTS=mysql
+    ports:
+      - "3001:80"
 volumes:
-  db-store:
+  db-data:
