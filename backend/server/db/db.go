@@ -1,28 +1,61 @@
 package db
 
 import (
-    "database/sql"
-    _ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
-    "log"
-    "fmt"
+	"database/sql"
+	// "fmt"
+	"log"
+	// "os"
+
+	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 )
+const driverName = "mysql"
+// Conn 各repositoryで利用するDB接続(Connection)情報
+var Conn *sql.DB
 
-func ConnectToDB() (*sql.DB, error) {
-    connStr := "root:mysql@tcp(localhost:3307)/db?charset=utf8mb4&parseTime=True&loc=Local"
-    db, err := sql.Open("mysql", connStr)
-    if err != nil {
-        // 接続の開始に失敗した場合のエラーログ
-        log.Printf("データベースへの接続の開始に失敗しました: %v", err)
-        return nil, fmt.Errorf("データベースへの接続の開始に失敗: %w", err)
-    }
+func init() {
+    var err error
 
-    // データベース接続の確認
-    if err = db.Ping(); err != nil {
-        // 接続の確認に失敗した場合のエラーログ
-        log.Printf("データベースへの接続の確認に失敗しました: %v", err)
-        return nil, fmt.Errorf("データベースへの接続の確認に失敗: %w", err)
-    }
-
-    log.Println("データベースへの接続に成功しました。")
-    return db, nil
+	Conn, err = sql.Open(driverName,
+		"root:mysql@tcp(localhost:3307)/db?charset=utf8mb4&parseTime=True&loc=Local")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := Conn.Ping(); err != nil {
+		log.Fatalf("can't connect to mysql server. ")
 }
+    log.Println("db接続成功")
+}
+
+
+// /* ===== データベースへ接続する. ===== */
+// 	// ユーザ
+// 	user := os.Getenv("MYSQL_USER")
+// 	// パスワード
+// 	password := os.Getenv("MYSQL_PASSWORD")
+// 	// 接続先ホスト
+// 	host := os.Getenv("MYSQL_HOST")
+// 	// 接続先ポート
+// 	port := os.Getenv("MYSQL_PORT")
+// 	// 接続先データベース
+// 	database := os.Getenv("MYSQL_DATABASE")
+
+// 	// 接続情報は以下のように指定する.
+// 	// user:password@tcp(host:port)/database
+// 	var err error
+// 	Conn, err = sql.Open(driverName,
+// 		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, database))
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	if err := Conn.Ping(); err != nil {
+// 		log.Fatalf("can't connect to mysql server. "+
+// 			"MYSQL_USER=%s, "+
+// 			"MYSQL_PASSWORD=%s, "+
+// 			"MYSQL_HOST=%s, "+
+// 			"MYSQL_PORT=%s, "+
+// 			"MYSQL_DATABASE=%s, "+
+// 			"error=%+v",
+// 			user, password, host, port, database, err)
+// 	}
+// }
+

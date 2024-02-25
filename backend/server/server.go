@@ -1,40 +1,52 @@
 package server
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
+	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
-    "github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
 )
 
 // Serve はHTTPサーバを起動します。データベース接続を引数に追加。
-func Serve(addr string, db *sql.DB) {
+func Serve(addr string) {
     e := echo.New()
-    // AppHandlerのインスタンスを作成し、データベース接続を渡す
-    appHandler := &handler.AppHandler{DB: db}
+
     
 // ミドルウェアの設定
-    e.Use(echomiddleware.Recover())
-    e.Use(echomiddleware.CORS())
-	e.Use(middleware.AuthenticateMiddleware(appHandler))
+    // panicが発生した場合の処理
+	e.Use(echomiddleware.Recover())
+	// CORSの設定
+	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
+		Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
+		AllowOrigins: echomiddleware.DefaultCORSConfig.AllowOrigins,
+		AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
+		AllowHeaders: []string{"Content-Type,Accept,Origin,x-token"},
+	}))
+
+    
+
+    
 
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
+    e.POST("/user/create", handler.HandleUserCreate()) // ユーザ登録API
+    e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
+
+    authAPI := e.Group("", middleware.AuthenticateMiddleware())
+    authAPI.GET("/user", handler.HandleUserGet()) // ユーザ情報取得API
+    authAPI.PUT("/user/update", handler.HandleUserUpdate())  // ユーザ情報更新API
 
 
+    
 
-    // ルーティングの設定
-    e.GET("/users", appHandler.HandleGetUser) // 修正: appHandlerを使用
-    e.POST("/user/create", appHandler.HandleUserCreate)
+    /* ===== サーバの起動 ===== */
 
-    // サーバーの起動
     log.Printf("Server running on %s", addr)
     if err := e.Start(addr); err != nil {
         log.Fatalf("Failed to start server: %v", err)

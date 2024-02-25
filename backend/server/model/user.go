@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"log"
 	"time"
-	// "github.com/Mire0726/Genkiyoho/backend/server/db"
+	"github.com/Mire0726/Genkiyoho/backend/server/db"
+    "fmt"
 )
 
 // User 構造体の定義（重複した定義を削除）
 type User struct {
-    ID        int       `json:"id"`
+    ID        string     `json:"id"`
     AuthToken string    `json:"authtoken"`
     Email     string    `json:"email"`
     Password  string    `json:"password"`
@@ -18,47 +19,62 @@ type User struct {
     UpdatedAt time.Time `json:"updated_at"`
 }
 
-var db *sql.DB 
-
-
 // InsertUser データベースにユーザレコードを登録する
-func InsertUser(db *sql.DB, record *User) error {
-    _, err := db.Exec(
-        "INSERT INTO users (auth_token, email, password, name) VALUES (?, ?, ?, ?)",
+func InsertUser(record *User) error  {
+
+    _, err := db.Conn.Exec(
+        "INSERT INTO users (id,auth_token, email, password, name) VALUES (?, ?, ?, ?, ?)",
+        record.ID,
         record.AuthToken,
         record.Email,
         record.Password,
         record.Name,
     )
     if err != nil {
-        log.Printf("ユーザーの登録に失敗しました: %v", err)
+        log.Printf("Error inserting user into database: %v", err) // ログ追加
         return err
     }
-    log.Println("ユーザーが正常に登録されました。")
+    log.Println("User successfully registered.") // 成功メッセージもログに記録
     return nil
 }
 
 
-// SelectUserByAuthToken 認証トークンに紐づくユーザ情報をデータベースから取得する
-func SelectUserByAuthToken(db *sql.DB, token string) (*User, error) {
-    var user User
-    query := `SELECT id, auth_token, email, password, name, created_at, updated_at FROM users WHERE auth_token = ?`
-    err := db.QueryRow(query, token).Scan(&user.ID, &user.AuthToken, &user.Email, &user.Password, &user.Name, &user.CreatedAt, &user.UpdatedAt)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            return nil, nil // ユーザが見つからない場合
-        }
-        log.Printf("Failed to find user by auth token: %v", err)
-        return nil, err
-    }
-
-    return &user, nil
+// SelectUserByPrimaryKey 主キーを条件にレコードを取得する
+func SelectUserByPrimaryKey(userID string) (*User, error) {
+	row := db.Conn.QueryRow("SELECT * FROM users WHERE id=?", userID)
+	return convertToUser(row)
 }
 
+// UpdateUserByAuthToken 認証トークンを条件にレコードを更新する
+func SelectUserByAuthToken(authToken string) (*User, error) {
+	row := db.Conn.QueryRow("SELECT * FROM users WHERE auth_token=?", authToken)
+	// convertToUser関数を使用して、行をUserオブジェクトに変換
+    user, err := convertToUser(row)
+    if err != nil {
+        // エラーハンドリング：ログに記録、エラーを返すなど
+        log.Printf("Error fetching user by auth token: %v", err)
+        return nil, err
+    }
+    
+    return user, nil
+}
 
+// UpdateUserByPrimaryKey 主キーを条件にレコードを更新する
+func UpdateUserByPrimaryKey(record *User) error {
+	if _, err := db.Conn.Exec(
+		"UPDATE users SET name=?,email=?,password=? WHERE id=?",
+		record.Name,
+        record.Email,
+        record.Password,
+		record.ID,
+	); err != nil {
+		return err
+	}
+	return nil
+}
 // GetAllUsers データベースから全ユーザを取得する
 func GetAllUsers() ([]User, error) {
-    rows, err := db.Query("SELECT id, auth_token, email, password, name, created_at, updated_at FROM users")
+    rows, err := db.Conn.Query("SELECT id, auth_token, email, password, name, created_at, updated_at FROM users")
     if err != nil {
         log.Printf("Error querying users from database: %v", err)
         return nil, err
@@ -83,4 +99,21 @@ func GetAllUsers() ([]User, error) {
     }
 
     return users, nil
+}
+
+// convertToUser rowデータをUserデータへ変換する
+func convertToUser(row *sql.Row) (*User, error) {
+	var user User
+	err := row.Scan(&user.ID, &user.AuthToken, &user.Name, &user.Email, &user.Password,&user.CreatedAt,&user.UpdatedAt)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            // レコードが見つからない場合、nilとカスタムエラーを返す
+            return nil, fmt.Errorf("user not found")
+        }
+        // その他のエラーの場合は、エラーをそのまま返す
+        return nil, fmt.Errorf("error scanning user: %v", err)
+    }
+    // エラーがない場合は、取得したユーザーオブジェクトとnilを返す
+    return &user, nil
+    
 }

@@ -1,20 +1,34 @@
 openapi: "3.0.2"
 info:
   title: "Sample API"
-  version: "1.0.0"
+  version: "2.0.0"
+servers:
+  - url: "http://localhost:8080"
 paths:
   /users:
     get:
+      tags:
+        - user
       summary: "全ユーザーを取得"
       responses:
-        '200':
+        "200":
           description: "ユーザーリストの取得に成功"
-  paths:
+  /user:
+    get:
+      tags:
+        - user
+      summary: "特定のユーザー情報を取得"
+      responses:
+        "200":
+          description: "ユーザー情報の取得に成功"
+      security:
+        - tokenAuth: []
   /user/create:
     post:
+      tags:
+        - user
       summary: ユーザ情報作成API
-      description: |
-        ユーザ情報を作成します。ユーザの名前情報をリクエストで受け取り、ユーザIDと認証用のトークンを生成しデータベースへ保存します。tokenは以降の他のAPIコール時にヘッダに設定をします。
+      description: ユーザ情報を作成します。ユーザの名前情報をリクエストで受け取り、ユーザIDと認証用のトークンを生成しデータベースへ保存します。tokenは以降の他のAPIコール時にヘッダに設定をします。
       requestBody:
         description: Request Body
         content:
@@ -43,3 +57,47 @@ paths:
                 properties:
                   token:
                     type: string
+  /user/update:
+    put:
+      summary: ユーザー情報の更新
+      tags:
+        - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        "200":
+          description: ユーザー情報が正常に更新されました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: 不正なリクエスト
+        "401":
+          description: 認証に失敗しました
+      security:
+        - tokenAuth: []
+components:
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: x-token
