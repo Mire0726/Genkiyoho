@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
-	// "github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
+	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -27,17 +27,21 @@ func Serve(addr string) {
 		AllowHeaders: []string{"Content-Type,Accept,Origin,x-token"},
 	}))
 
+    
 
-
+    
 
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
-    e.POST("/user/create", handler.HandleUserCreate())
-    e.GET("/users", handler.HandleGetUser()) 
+    e.POST("/user/create", handler.HandleUserCreate()) // ユーザ登録API
+    e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
 
-    // authAPI := e.Group("", middleware.AuthenticateMiddleware())
+    authAPI := e.Group("", middleware.AuthenticateMiddleware())
+    authAPI.GET("/user", handler.HandleUserGet()) // ユーザ情報取得API
+    authAPI.PUT("/user/update", handler.HandleUserUpdate())  // ユーザ情報更新API
+
 
     
 

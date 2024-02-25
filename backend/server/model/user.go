@@ -5,11 +5,12 @@ import (
 	"log"
 	"time"
 	"github.com/Mire0726/Genkiyoho/backend/server/db"
+    "fmt"
 )
 
 // User 構造体の定義（重複した定義を削除）
 type User struct {
-    ID        int       `json:"id"`
+    ID        string     `json:"id"`
     AuthToken string    `json:"authtoken"`
     Email     string    `json:"email"`
     Password  string    `json:"password"`
@@ -20,9 +21,10 @@ type User struct {
 
 // InsertUser データベースにユーザレコードを登録する
 func InsertUser(record *User) error  {
-    log.Println("model,line24")
+
     _, err := db.Conn.Exec(
-        "INSERT INTO users (auth_token, email, password, name) VALUES (?, ?, ?, ?)",
+        "INSERT INTO users (id,auth_token, email, password, name) VALUES (?, ?, ?, ?, ?)",
+        record.ID,
         record.AuthToken,
         record.Email,
         record.Password,
@@ -36,34 +38,34 @@ func InsertUser(record *User) error  {
     return nil
 }
 
-// SelectUserByAuthToken auth_tokenを条件にレコードを取得する
-func SelectUserByAuthToken(authToken string) (*User, error) {
-    user := &User{}
-    err := db.Conn.QueryRow("SELECT id, auth_token FROM `users` WHERE auth_token=?", authToken).Scan(&user.ID, &user.AuthToken)
-    if err != nil {
-        if err == sql.ErrNoRows {
-            // レコードが見つからない場合はnilを返す
-            return nil, nil
-        }
-        // その他のエラー
-        log.Printf("Error querying user by auth token: %v", err)
-        return nil, err
-    }
 
-    return user, nil
-}
 // SelectUserByPrimaryKey 主キーを条件にレコードを取得する
-func SelectUserByPrimaryKey(userID int) (*User, error) {
-	row := db.Conn.QueryRow("SELECT * FROM user WHERE id=?", userID)
+func SelectUserByPrimaryKey(userID string) (*User, error) {
+	row := db.Conn.QueryRow("SELECT * FROM users WHERE id=?", userID)
 	return convertToUser(row)
 }
 
+// UpdateUserByAuthToken 認証トークンを条件にレコードを更新する
+func SelectUserByAuthToken(authToken string) (*User, error) {
+	row := db.Conn.QueryRow("SELECT * FROM users WHERE auth_token=?", authToken)
+	// convertToUser関数を使用して、行をUserオブジェクトに変換
+    user, err := convertToUser(row)
+    if err != nil {
+        // エラーハンドリング：ログに記録、エラーを返すなど
+        log.Printf("Error fetching user by auth token: %v", err)
+        return nil, err
+    }
+    
+    return user, nil
+}
 
 // UpdateUserByPrimaryKey 主キーを条件にレコードを更新する
 func UpdateUserByPrimaryKey(record *User) error {
 	if _, err := db.Conn.Exec(
-		"UPDATE user SET name=? WHERE id=?",
+		"UPDATE users SET name=?,email=?,password=? WHERE id=?",
 		record.Name,
+        record.Email,
+        record.Password,
 		record.ID,
 	); err != nil {
 		return err
@@ -102,11 +104,16 @@ func GetAllUsers() ([]User, error) {
 // convertToUser rowデータをUserデータへ変換する
 func convertToUser(row *sql.Row) (*User, error) {
 	var user User
-	if err := row.Scan(&user.ID, &user.AuthToken, &user.Name, &user.Email, &user.Password,&user.CreatedAt,&user.UpdatedAt); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &user, nil
+	err := row.Scan(&user.ID, &user.AuthToken, &user.Name, &user.Email, &user.Password,&user.CreatedAt,&user.UpdatedAt)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            // レコードが見つからない場合、nilとカスタムエラーを返す
+            return nil, fmt.Errorf("user not found")
+        }
+        // その他のエラーの場合は、エラーをそのまま返す
+        return nil, fmt.Errorf("error scanning user: %v", err)
+    }
+    // エラーがない場合は、取得したユーザーオブジェクトとnilを返す
+    return &user, nil
+    
 }

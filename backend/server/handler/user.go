@@ -11,7 +11,6 @@ import (
 	"log"
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"errors"
-	"strconv"
 )
 
 type userCreateRequest struct {
@@ -26,6 +25,7 @@ func validateEmail(email string) bool {
     return err == nil
 }
 
+// HandleUserCreate ユーザ登録処理のハンドラ
 func HandleUserCreate() echo.HandlerFunc {
     return func(c echo.Context) error {
 		req := &userCreateRequest{}
@@ -39,6 +39,12 @@ func HandleUserCreate() echo.HandlerFunc {
         return echo.NewHTTPError(http.StatusBadRequest, "Invalid email format")
     }
 
+	// UUIDでユーザIDを生成する
+	userID, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+
     // UUIDで認証トークンを生成
     authToken, err := uuid.NewRandom()
     if err != nil {
@@ -48,6 +54,7 @@ func HandleUserCreate() echo.HandlerFunc {
     now := time.Now() // 現在の時刻
 	// データベースにユーザデータを登録する
 	if err := model.InsertUser(&model.User{
+		ID:		userID.String(),
 		AuthToken: authToken.String(),
         Email:     req.Email,
         Password:  req.Password,
@@ -80,19 +87,14 @@ func HandleGetUser() echo.HandlerFunc{
 	}
 }
 
-// HandleUserGet ユーザ情報を取得するエンドポイントのハンドラ
+// HandleUserGet 特定のユーザ情報を取得するエンドポイントのハンドラ
 func HandleUserGet() echo.HandlerFunc {
     return func(c echo.Context) error {
         // Contextから認証済みのユーザIDを取得
         ctx := c.Request().Context()
-        userIDStr := auth.GetUserIDFromContext(ctx)
-        if userIDStr == "" {
+        userID := auth.GetUserIDFromContext(ctx)
+        if userID == "" {
             return errors.New("userID is empty")
-        }
-
-        userID, err := strconv.Atoi(userIDStr)
-        if err != nil {
-            return errors.New("invalid userID format")
         }
 
         // ユーザデータの取得処理を実装
@@ -111,44 +113,47 @@ func HandleUserGet() echo.HandlerFunc {
 
 type userUpdateRequest struct {
 	Name string `json:"name"`
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
-// HandleUserUpdate ユーザ情報を更新するエンドポイントのハンドラ
+// HandleUserUpdate ユーザ情報更新処理
 func HandleUserUpdate() echo.HandlerFunc {
     return func(c echo.Context) error {
-        log.Println("99")
 
         // リクエストBodyから更新後情報を取得
         req := &userUpdateRequest{}
         if err := c.Bind(req); err != nil {
-            return err
+            return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body format")
         }
-        
+     
         // Contextから認証済みのユーザIDを取得
         ctx := c.Request().Context()
-        userIDStr := auth.GetUserIDFromContext(ctx)
-        if userIDStr == "" {
-            return errors.New("userID is empty")
+        userID := auth.GetUserIDFromContext(ctx)
+        if userID == "" {
+            return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
         }
-
-        userID, err := strconv.Atoi(userIDStr)
+        
+        // 更新対象のユーザデータを取得（存在チェック）
+        userData, err := model.SelectUserByPrimaryKey(userID)
         if err != nil {
-            return errors.New("invalid userID format")
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch user data")
         }
-
-		userData,err:=model.SelectUserByPrimaryKey(userID)
-		if err !=nil {
-			return errors.New("userData is empty")
-		}
+        if userData == nil {
+            return echo.NewHTTPError(http.StatusNotFound, "User not found")
+        }
+        
+        log.Println("line150")
+        
+        // リクエストから受け取ったデータでユーザ情報を更新
         userData.Name = req.Name
-        // ユーザデータの更新処理を実装
-        err = model.UpdateUserByPrimaryKey(userData)
-        if err != nil {
-            return err
+        userData.Email = req.Email
+        userData.Password = req.Password // 実運用ではパスワードをハッシュ化
+
+        // ユーザデータの更新処理
+        if err := model.UpdateUserByPrimaryKey(userData); err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update user data")
         }
         
         return c.NoContent(http.StatusOK)
     }
 }
-
-
-

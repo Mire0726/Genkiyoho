@@ -8,8 +8,8 @@ type contextKey string
 
 var userIDKey = contextKey("userID")
 
-// SetUserID はContextにユーザID（整数型）を保存します。
-func SetUserID(ctx context.Context, userID int) context.Context {
+// SetUserID はContextにユーザIDを保存します。
+func SetUserID(ctx context.Context, userID string) context.Context {
     return context.WithValue(ctx, userIDKey, userID)
 }
 
