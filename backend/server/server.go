@@ -35,12 +35,12 @@ func Serve(addr string) {
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
-    e.POST("/user/create", handler.HandleUserCreate()) // ユーザ登録API
+    e.POST("/users/me", handler.HandleUserCreate()) // ユーザ登録API
     e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
 
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
-    authAPI.GET("/user", handler.HandleUserGet()) // ユーザ情報取得API
-    authAPI.PUT("/user/update", handler.HandleUserUpdate())  // ユーザ情報更新API
+    authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API
+    authAPI.PUT("/users/me", handler.HandleUserUpdate())  // ユーザ情報更新API
 
 
     

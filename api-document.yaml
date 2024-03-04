@@ -12,18 +12,7 @@ paths:
       summary: "全ユーザーを取得"
       responses:
         "200":
-          description: "ユーザーリストの取得に成功"
-  /user:
-    get:
-      tags:
-        - user
-      summary: "特定のユーザー情報を取得"
-      responses:
-        "200":
-          description: "ユーザー情報の取得に成功"
-      security:
-        - tokenAuth: []
-  /user/create:
+          description: "ユーザーリストの取得に成功しました"
     post:
       tags:
         - user
@@ -57,7 +46,16 @@ paths:
                 properties:
                   token:
                     type: string
-  /user/update:
+  /users/me:
+    get:
+      tags:
+        - user
+      summary: "特定のユーザー情報を取得"
+      responses:
+        "200":
+          description: "ユーザー情報の取得に成功"
+      security:
+        - tokenAuth: []
     put:
       summary: ユーザー情報の更新
       tags:
@@ -93,6 +91,100 @@ paths:
           description: 不正なリクエスト
         "401":
           description: 認証に失敗しました
+      security:
+        - tokenAuth: []
+  /users/me/condition:
+    get:
+      summary: "特定のユーザーのコンディション一覧を取得"
+      tags:
+        - User Condition
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: "ユーザーID"
+      responses:
+        "200":
+          description: コンディション一覧が正常に取得されました
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserCondition"
+        "400":
+          description: 不正なリクエスト
+        "401":
+          description: 認証に失敗しました
+      security:
+        - tokenAuth: []
+    post:
+      summary: "特定のユーザーのコンディションを作成"
+      tags:
+        - User Condition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  description: "ユーザーID"
+                condition_id:
+                  type: string
+                  description: "コンディションID"
+                start_date:
+                  type: string
+                  format: date
+                  description: "開始日"
+                end_date:
+                  type: string
+                  format: date
+                  description: "終了日"
+                damage_points:
+                  type: integer
+                  description: "ダメージポイント"
+              required:
+                - user_id
+                - condition_id
+                - start_date
+                - end_date
+                - damage_points
+      responses:
+        "201":
+          description: コンディションが正常に作成されました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User condition successfully created."
+        "400":
+          description: 不正なリクエスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request format."
+        "401":
+          description: 認証に失敗しました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Authentication failed."
       security:
         - tokenAuth: []
 components:
