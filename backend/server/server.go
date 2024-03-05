@@ -37,7 +37,9 @@ func Serve(addr string) {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
     e.POST("/users/me", handler.HandleUserCreate()) // ユーザ登録API
+    e.POST("/users/login", handler.HandleUserLogin()) // ログインAPI
     e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
+
 
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
     authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API

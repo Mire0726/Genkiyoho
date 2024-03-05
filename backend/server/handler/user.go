@@ -156,3 +156,29 @@ func HandleUserUpdate() echo.HandlerFunc {
         return c.NoContent(http.StatusOK)
     }
 }
+
+// ログイン処理のハンドラ関数
+func HandleUserLogin(c echo.Context) error {
+    req := &loginRequest{}
+    if err := c.Bind(req); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
+    }
+
+    // ユーザー検証処理（ダミーの検証プロセス）
+    // 実際にはデータベースからユーザーを検索し、パスワードが一致するかを確認する必要があります
+    if req.Email == "user@example.com" && req.Password == "password" {
+        // 認証トークンを生成（ダミーのトークン）
+        token := "generated-auth-token"
+        
+        return c.JSON(http.StatusOK, map[string]string{
+            "token": token,
+        })
+    } else {
+        return echo.NewHTTPError(http.StatusUnauthorized, "Invalid email or password")
+    }
+}
+
+type loginRequest struct {
+    Email    string `json:"email"`
+    Password string `json:"password"`
+}
