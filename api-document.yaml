@@ -98,13 +98,6 @@ paths:
       summary: "特定のユーザーのコンディション一覧を取得"
       tags:
         - User Condition
-      parameters:
-        - in: query
-          name: user_id
-          schema:
-            type: string
-          required: true
-          description: "ユーザーID"
       responses:
         "200":
           description: コンディション一覧が正常に取得されました
@@ -131,11 +124,8 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: string
-                  description: "ユーザーID"
                 condition_id:
-                  type: string
+                  type: integer
                   description: "コンディションID"
                 start_date:
                   type: string
@@ -149,7 +139,6 @@ paths:
                   type: integer
                   description: "ダメージポイント"
               required:
-                - user_id
                 - condition_id
                 - start_date
                 - end_date

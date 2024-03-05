@@ -1,6 +1,7 @@
 package server
 
 import (
+
 	"log"
 	"net/http"
 
@@ -41,8 +42,8 @@ func Serve(addr string) {
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
     authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API
     authAPI.PUT("/users/me", handler.HandleUserUpdate())  // ユーザ情報更新API
-
-
+    authAPI.POST("users/me/condition",handler.HandleConditionCreate()) 
+    authAPI.GET("users/me/condition",handler.HandleuserConditionGet())
     
 
     /* ===== サーバの起動 ===== */

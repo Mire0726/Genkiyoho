@@ -32,7 +32,6 @@ func HandleUserCreate() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
-		log.Println("handler,line34")
 
     // メールアドレスの形式を検証
     if !validateEmail(req.Email) {
