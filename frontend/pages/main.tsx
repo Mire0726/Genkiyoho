@@ -28,7 +28,7 @@ export default function Main() {
     const url = "http://localhost:8080";
     console.log("Fetching conditions...");
     const options: AxiosRequestConfig = {
-      url,
+      url: `${url}/users/me/condition`,
       method: "GET",
       headers: {
         "x-token": token,
@@ -59,7 +59,6 @@ export default function Main() {
         "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
       );
     }
-
     console.log("Conditions after fetching:", conditions); // ログに状態を出力
   };
 
@@ -71,7 +70,6 @@ export default function Main() {
     <div className={styles.mainContainer}>
       <div className={styles.card}>
         <h1>今日の元気予報</h1>
-        {/* コンテンツ */}
         {errorMessage && <div className={styles.error}>{errorMessage}</div>}
       </div>
       <div className={styles.card}>
