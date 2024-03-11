@@ -4,6 +4,7 @@ info:
   version: "2.0.0"
 servers:
   - url: "http://localhost:8080"
+  - url: "http://localhost:3000"
 paths:
   /users:
     get:
@@ -93,6 +94,55 @@ paths:
           description: 認証に失敗しました
       security:
         - tokenAuth: []
+  /users/login:
+    post:
+      summary: "ユーザー認証"
+      tags:
+        - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: ユーザーが正常に認証されました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "400":
+          description: 不正なリクエスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request format."
+        "401":
+          description: 認証に失敗しました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Authentication failed."
   /users/me/condition:
     get:
       summary: "特定のユーザーのコンディション一覧を取得"
@@ -105,8 +155,6 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/UserCondition"
         "400":
           description: 不正なリクエスト
         "401":

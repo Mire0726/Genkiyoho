@@ -11,6 +11,7 @@ import (
 	"log"
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"errors"
+    "github.com/Mire0726/Genkiyoho/backend/server/db"
 )
 
 type userCreateRequest struct {
@@ -155,4 +156,30 @@ func HandleUserUpdate() echo.HandlerFunc {
         
         return c.NoContent(http.StatusOK)
     }
+}
+
+// HandleUserLogin はユーザーのログイン処理を行います。
+func HandleUserLogin(c echo.Context) error {
+    var req loginRequest
+    if err := c.Bind(&req); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
+    }
+
+
+    user, err := model.AuthenticateUser(db.Conn, req.Email, req.Password)
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, "Authentication failed")
+    }
+    if user == nil {
+        return echo.NewHTTPError(http.StatusUnauthorized, "Invalid email or password")
+    }
+
+    // 認証成功。トークン生成やセッション管理などの処理をここに追加
+
+    return c.JSON(http.StatusOK, user)
+}
+
+type loginRequest struct {
+    Email    string `json:"email"`
+    Password string `json:"password"`
 }

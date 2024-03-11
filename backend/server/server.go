@@ -15,29 +15,36 @@ import (
 // Serve はHTTPサーバを起動します。データベース接続を引数に追加。
 func Serve(addr string) {
     e := echo.New()
-
     
 // ミドルウェアの設定
     // panicが発生した場合の処理
 	e.Use(echomiddleware.Recover())
 	// CORSの設定
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-		Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
-		AllowOrigins: echomiddleware.DefaultCORSConfig.AllowOrigins,
-		AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
-		AllowHeaders: []string{"Content-Type,Accept,Origin,x-token"},
-	}))
-
+        Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
+        AllowOrigins: echomiddleware.DefaultCORSConfig.AllowOrigins,
+        AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
+        AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
+    }))
     
 
+    // e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
+    //     AllowOrigins: []string{"http://localhost:3000"}, // フロントエンドのオリジンを許可
+    //     AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, // 必要なHTTPメソッドを許可
+    //     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization}, // 必要なヘッダーを許可
+    // }))
     
+    
+
 
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
     e.POST("/users/me", handler.HandleUserCreate()) // ユーザ登録API
+    e.POST("/users/login", handler.HandleUserLogin) // ログインAPI
     e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
+
 
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
     authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API

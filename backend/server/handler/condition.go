@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-    "time"
+    // "time"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"github.com/Mire0726/Genkiyoho/backend/server/model"
@@ -12,16 +12,10 @@ import (
 
 type conditionCreateRequest struct {
     Condition_id int `json:"condition_id"`
+    ConditionName string `json:"condition_name"`
     Start_date string `json:"start_date"`
     End_date string `json:"end_date"`
     Damage_points int `json:"damage_points"`
-}
-func validateDate(dateStr string) (bool, error) {
-	_, err := time.Parse("2006-01-02", dateStr)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
 }
 
 // conditionの登録
@@ -73,6 +67,7 @@ func HandleuserConditionGet() echo.HandlerFunc {
         if userID == "" {
             return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
         }
+        log.Println("userIDisoK")
         // 対象のユーザデータを取得（存在チェック）
         userData, err := model.SelectUserByPrimaryKey(userID)
         if err != nil {
@@ -81,10 +76,10 @@ func HandleuserConditionGet() echo.HandlerFunc {
         if userData == nil {
             return echo.NewHTTPError(http.StatusNotFound, "User not found")
         }
-        
+        log.Println("userDataisoK")
         userConditions, err := model.GetUserCondition(userID)
         if err != nil {
-            return err
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch user conditions")
         }
         return c.JSON(http.StatusOK, userConditions)
     }
@@ -95,4 +90,3 @@ func HandleuserConditionGet() echo.HandlerFunc {
 //conditionの更新(ダメージなど)
 
 
-//condition一覧取得
