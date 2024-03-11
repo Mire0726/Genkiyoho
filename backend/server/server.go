@@ -15,7 +15,6 @@ import (
 // Serve はHTTPサーバを起動します。データベース接続を引数に追加。
 func Serve(addr string) {
     e := echo.New()
-
     
 // ミドルウェアの設定
     // panicが発生した場合の処理
@@ -28,16 +27,12 @@ func Serve(addr string) {
 		AllowHeaders: []string{"Content-Type,Accept,Origin,x-token"},
 	}))
 
-    
-
-    
-
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
     })
     e.POST("/users/me", handler.HandleUserCreate()) // ユーザ登録API
-    e.POST("/users/login", handler.HandleUserLogin()) // ログインAPI
+    e.POST("/users/login", handler.HandleUserLogin) // ログインAPI
     e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
 
 

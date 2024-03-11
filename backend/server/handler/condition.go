@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-    "time"
+    // "time"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"github.com/Mire0726/Genkiyoho/backend/server/model"
@@ -16,13 +16,13 @@ type conditionCreateRequest struct {
     End_date string `json:"end_date"`
     Damage_points int `json:"damage_points"`
 }
-func validateDate(dateStr string) (bool, error) {
-	_, err := time.Parse("2006-01-02", dateStr)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
+// func validateDate(dateStr string) (bool, error) {
+// 	_, err := time.Parse("2006-01-02", dateStr)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
 
 // conditionの登録
 func HandleConditionCreate() echo.HandlerFunc {

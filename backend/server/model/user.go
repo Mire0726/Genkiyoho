@@ -117,3 +117,17 @@ func convertToUser(row *sql.Row) (*User, error) {
     return &user, nil
     
 }
+
+// AuthenticateUser は指定されたメールアドレスとパスワードに一致するユーザーをデータベースから検索します。
+func AuthenticateUser(db *sql.DB, email, password string) (*User, error) {
+    user := &User{}
+    err := db.QueryRow("SELECT id, email, password FROM users WHERE email = ? AND password = ?", email, password).Scan(&user.ID, &user.Email, &user.Password)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return nil, nil // ユーザーが見つからない場合はnilを返す
+        }
+        log.Printf("Failed to authenticate user: %v", err)
+        return nil, err
+    }
+    return user, nil
+}

@@ -18,12 +18,12 @@ export default function Login() {
     e.preventDefault();
     try {
       // ログイン処理のAPI呼び出し
-      const { data } = await axios.get('http://localhost:8080/users/me', {
+      const { data } = await axios.post('http://localhost:8080/users/login', {
         email: loginEmail,
         password: loginPassword,
       });
-      localStorage.setItem('token', data.token);
-      router.push('/main');
+      localStorage.setItem('token', data.token); // 認証トークンをローカルストレージに保存
+      router.push('/main'); // メインページにリダイレクト
     } catch (error) {
       console.error(error);
       alert('ログインに失敗しました。');
