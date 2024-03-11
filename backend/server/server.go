@@ -21,11 +21,21 @@ func Serve(addr string) {
 	e.Use(echomiddleware.Recover())
 	// CORSの設定
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-		Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
-		AllowOrigins: echomiddleware.DefaultCORSConfig.AllowOrigins,
-		AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
-		AllowHeaders: []string{"Content-Type,Accept,Origin,x-token"},
-	}))
+        Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
+        AllowOrigins: echomiddleware.DefaultCORSConfig.AllowOrigins,
+        AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
+        AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
+    }))
+    
+
+    // e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
+    //     AllowOrigins: []string{"http://localhost:3000"}, // フロントエンドのオリジンを許可
+    //     AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, // 必要なHTTPメソッドを許可
+    //     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization}, // 必要なヘッダーを許可
+    // }))
+    
+    
+
 
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {

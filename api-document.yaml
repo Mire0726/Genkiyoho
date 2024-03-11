@@ -4,6 +4,7 @@ info:
   version: "2.0.0"
 servers:
   - url: "http://localhost:8080"
+  - url: "http://localhost:3000"
 paths:
   /users:
     get:
@@ -154,8 +155,6 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/UserCondition"
         "400":
           description: 不正なリクエスト
         "401":

@@ -22,7 +22,7 @@ export default function Login() {
         email: loginEmail,
         password: loginPassword,
       });
-      localStorage.setItem('token', data.token); // 認証トークンをローカルストレージに保存
+      localStorage.setItem('token', data.authtoken); // 認証トークンをローカルストレージに保存
       router.push('/main'); // メインページにリダイレクト
     } catch (error) {
       console.error(error);
@@ -68,7 +68,6 @@ export default function Login() {
         />
         <button type="submit">ログイン</button>
       </form>
-
       <form onSubmit={handleSubmitRegistration} className={styles.registrationForm}>
         <h3>新規登録</h3>
         <input

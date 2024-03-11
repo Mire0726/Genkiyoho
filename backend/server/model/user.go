@@ -2,10 +2,11 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
+
 	"github.com/Mire0726/Genkiyoho/backend/server/db"
-    "fmt"
 )
 
 // User 構造体の定義（重複した定義を削除）
@@ -121,7 +122,7 @@ func convertToUser(row *sql.Row) (*User, error) {
 // AuthenticateUser は指定されたメールアドレスとパスワードに一致するユーザーをデータベースから検索します。
 func AuthenticateUser(db *sql.DB, email, password string) (*User, error) {
     user := &User{}
-    err := db.QueryRow("SELECT id, email, password FROM users WHERE email = ? AND password = ?", email, password).Scan(&user.ID, &user.Email, &user.Password)
+    err := db.QueryRow("SELECT id,auth_token, email, password FROM users WHERE email = ? AND password = ?", email, password).Scan(&user.ID,&user.AuthToken, &user.Email, &user.Password)
     if err != nil {
         if err == sql.ErrNoRows {
             return nil, nil // ユーザーが見つからない場合はnilを返す

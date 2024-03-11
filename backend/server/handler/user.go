@@ -158,7 +158,6 @@ func HandleUserUpdate() echo.HandlerFunc {
     }
 }
 
-// ログイン処理のハンドラ関数
 // HandleUserLogin はユーザーのログイン処理を行います。
 func HandleUserLogin(c echo.Context) error {
     var req loginRequest
