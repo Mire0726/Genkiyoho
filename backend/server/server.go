@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+    "github.com/Mire0726/Genkiyoho/backend/server/service"
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
 	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
@@ -26,15 +27,6 @@ func Serve(addr string) {
         AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
         AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
     }))
-    
-
-    // e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-    //     AllowOrigins: []string{"http://localhost:3000"}, // フロントエンドのオリジンを許可
-    //     AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, // 必要なHTTPメソッドを許可
-    //     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization}, // 必要なヘッダーを許可
-    // }))
-    
-    
 
 
     // ルーティングの設定
@@ -52,6 +44,7 @@ func Serve(addr string) {
     authAPI.POST("users/me/condition",handler.HandleConditionCreate()) 
     authAPI.GET("users/me/condition",handler.HandleuserConditionGet())
     
+    service.Service()
 
     /* ===== サーバの起動 ===== */
 

@@ -8,8 +8,6 @@ import (
 
 	"github.com/joho/godotenv"
 
-
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -32,9 +30,7 @@ func init() {
 	charset := os.Getenv("MYSQL_CHARSET")
 	parseTime := os.Getenv("MYSQL_PARSE_TIME")
 	loc := os.Getenv("MYSQL_LOC")
-
-	log.Println(user, password, host, port, database, charset, parseTime, loc)
-
+	
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
 		user, password, host, port, database, charset, parseTime, loc)
 
