@@ -2,31 +2,41 @@ package db
 
 import (
 	"database/sql"
-	// "fmt"
+	"fmt"
 	"log"
-	// "os"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 )
 const driverName = "mysql"
-// Conn 各repositoryで利用するDB接続(Connection)情報
+
 var Conn *sql.DB
 
 func init() {
-    var err error
+	
+	user := os.Getenv("MYSQL_USER")
+	password := os.Getenv("MYSQL_PASSWORD")
+	host := os.Getenv("MYSQL_HOST")
+	port := os.Getenv("MYSQL_PORT")
+	database := os.Getenv("MYSQL_DATABASE")
+	charset := os.Getenv("MYSQL_CHARSET")
+	parseTime := os.Getenv("MYSQL_PARSE_TIME")
+	loc := os.Getenv("MYSQL_LOC")
 
-	Conn, err = sql.Open(driverName,
-		"root:mysql@tcp(localhost:3307)/db?charset=utf8mb4&parseTime=True&loc=Local")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
+		user, password, host, port, database, charset, parseTime, loc)
+
+	var err error
+	Conn, err = sql.Open(driverName, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if err := Conn.Ping(); err != nil {
-		log.Fatalf("can't connect to mysql server. ")
-}
-    log.Println("db接続成功")
+		log.Fatal("Unable to connect to the database:", err)
+	}
 }
 
-
+//func init() {
 // /* ===== データベースへ接続する. ===== */
 // 	// ユーザ
 // 	user := os.Getenv("MYSQL_USER")
@@ -43,7 +53,9 @@ func init() {
 // 	// user:password@tcp(host:port)/database
 // 	var err error
 // 	Conn, err = sql.Open(driverName,
+// 		// fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, database))
 // 		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, database))
+
 // 	if err != nil {
 // 		log.Fatal(err)
 // 	}
@@ -59,3 +71,17 @@ func init() {
 // 	}
 // }
 
+// func init(){
+//     var err error
+
+// 	Conn, err = sql.Open(driverName,
+// 		"root:mysql@tcp(localhost:3307)/db?charset=utf8mb4&parseTime=True&loc=Local")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	if err := Conn.Ping(); err != nil {
+// 		log.Fatalf("can't connect to mysql server. ")
+// }
+//     log.Println("db接続成功")
+// }
+// }
