@@ -6,14 +6,24 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
+	"github.com/joho/godotenv"
+
+
+
+	_ "github.com/go-sql-driver/mysql"
 )
+
 const driverName = "mysql"
 
 var Conn *sql.DB
 
 func init() {
-	
+
+	err := godotenv.Load() 
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	user := os.Getenv("MYSQL_USER")
 	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
@@ -23,10 +33,11 @@ func init() {
 	parseTime := os.Getenv("MYSQL_PARSE_TIME")
 	loc := os.Getenv("MYSQL_LOC")
 
+	log.Println(user, password, host, port, database, charset, parseTime, loc)
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
 		user, password, host, port, database, charset, parseTime, loc)
 
-	var err error
 	Conn, err = sql.Open(driverName, dsn)
 	if err != nil {
 		log.Fatal(err)
@@ -35,53 +46,3 @@ func init() {
 		log.Fatal("Unable to connect to the database:", err)
 	}
 }
-
-//func init() {
-// /* ===== データベースへ接続する. ===== */
-// 	// ユーザ
-// 	user := os.Getenv("MYSQL_USER")
-// 	// パスワード
-// 	password := os.Getenv("MYSQL_PASSWORD")
-// 	// 接続先ホスト
-// 	host := os.Getenv("MYSQL_HOST")
-// 	// 接続先ポート
-// 	port := os.Getenv("MYSQL_PORT")
-// 	// 接続先データベース
-// 	database := os.Getenv("MYSQL_DATABASE")
-
-// 	// 接続情報は以下のように指定する.
-// 	// user:password@tcp(host:port)/database
-// 	var err error
-// 	Conn, err = sql.Open(driverName,
-// 		// fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, database))
-// 		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, host, port, database))
-
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	if err := Conn.Ping(); err != nil {
-// 		log.Fatalf("can't connect to mysql server. "+
-// 			"MYSQL_USER=%s, "+
-// 			"MYSQL_PASSWORD=%s, "+
-// 			"MYSQL_HOST=%s, "+
-// 			"MYSQL_PORT=%s, "+
-// 			"MYSQL_DATABASE=%s, "+
-// 			"error=%+v",
-// 			user, password, host, port, database, err)
-// 	}
-// }
-
-// func init(){
-//     var err error
-
-// 	Conn, err = sql.Open(driverName,
-// 		"root:mysql@tcp(localhost:3307)/db?charset=utf8mb4&parseTime=True&loc=Local")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	if err := Conn.Ping(); err != nil {
-// 		log.Fatalf("can't connect to mysql server. ")
-// }
-//     log.Println("db接続成功")
-// }
-// }
