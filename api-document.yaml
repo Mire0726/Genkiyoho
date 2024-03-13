@@ -161,8 +161,9 @@ paths:
           description: 認証に失敗しました
       security:
         - tokenAuth: []
+  /users/me/condition/cycle:
     post:
-      summary: "特定のユーザーのコンディションを作成"
+      summary: "特定のユーザーのサイクル条件を作成"
       tags:
         - User Condition
       requestBody:
@@ -170,30 +171,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                condition_id:
-                  type: integer
-                  description: "コンディションID"
-                start_date:
-                  type: string
-                  format: date
-                  description: "開始日"
-                end_date:
-                  type: string
-                  format: date
-                  description: "終了日"
-                damage_points:
-                  type: integer
-                  description: "ダメージポイント"
-              required:
-                - condition_id
-                - start_date
-                - end_date
-                - damage_points
+              $ref: '#/components/schemas/CycleConditionRequest'
       responses:
-        "201":
-          description: コンディションが正常に作成されました
+        "200":
+          description: サイクル条件が正常に作成されました
           content:
             application/json:
               schema:
@@ -201,19 +182,27 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User condition successfully created."
+                    example: "Cycle condition successfully created."
         "400":
           description: 不正なリクエスト
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid request format."
         "401":
           description: 認証に失敗しました
+      security:
+        - tokenAuth: []
+  /users/me/condition/environment:
+    post:
+      summary: "特定のユーザーの環境条件を作成"
+      tags:
+        - User Condition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnvironmentConditionRequest'
+      responses:
+        "200":
+          description: 環境条件が正常に作成されました
           content:
             application/json:
               schema:
@@ -221,10 +210,64 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Authentication failed."
+                    example: "Environment condition successfully created."
+        "400":
+          description: 不正なリクエスト
+        "401":
+          description: 認証に失敗しました
       security:
         - tokenAuth: []
 components:
+  schemas:
+    CycleConditionRequest:
+      type: object
+      properties:
+        condition_id:
+          type: integer
+          description: "コンディションID"
+        start_date:
+          type: string
+          format: date
+          description: "開始日"
+        duration:
+          type: integer
+          description: "期間（日数）"
+        cycle_length:
+          type: integer
+          description: "周期の長さ（日数）"
+      required:
+        - condition_id
+        - condition_name
+        - start_date
+        - duration
+        - cycle_length
+        - damage_point
+    EnvironmentConditionRequest:
+      type: object
+      properties:
+        condition_id:
+          type: integer
+          description: "コンディションID"
+        condition_name:
+          type: string
+          description: "コンディションの名前"
+        start_date:
+          type: string
+          format: date
+          description: "日付"
+        region:
+          type: string
+          description: "地域"
+        count:
+          type: integer
+          description: "カウント（例：花粉の数）"
+      required:
+        - condition_id
+        - condition_name
+        - start_date
+        - region
+        - count
+        - damage_point
   securitySchemes:
     tokenAuth:
       type: apiKey
