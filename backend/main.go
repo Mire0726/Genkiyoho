@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/Mire0726/Genkiyoho/backend/server"
+
 	
 )
 
@@ -14,6 +15,7 @@ func main() {
 
     // サーバーの起動
     server.Serve(addr)
+
 }
 
 

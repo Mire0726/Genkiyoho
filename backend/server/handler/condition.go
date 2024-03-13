@@ -1,87 +1,167 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
-    // "time"
+	"time"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"github.com/Mire0726/Genkiyoho/backend/server/model"
 	"github.com/labstack/echo/v4"
-    "log"
 )
 
-type conditionCreateRequest struct {
-    Condition_id int `json:"condition_id"`
-    ConditionName string `json:"condition_name"`
-    Start_date string `json:"start_date"`
-    End_date string `json:"end_date"`
-    Damage_points int `json:"damage_points"`
+// 基本リクエスト構造体
+type baseConditionRequest struct {
+    ConditionID int `json:"condition_id"`
+    StartDate string `json:"start_date"`
 }
 
-// conditionの登録
-func HandleConditionCreate() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		req := &conditionCreateRequest{}
-		if err := c.Bind(req); err != nil {
-            return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body format")
-        }
+// サイクル条件リクエスト構造体
+type cycleConditionRequest struct {
+    baseConditionRequest
+    Duration int `json:"duration"`
+    CycleLength int `json:"cycle_length"`
+}
 
-        // Contextから認証済みのユーザIDを取得
-        ctx := c.Request().Context()
-        userID := auth.GetUserIDFromContext(ctx)
-        if userID == "" {
-            return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
-        }
-        log.Println(userID)
-        log.Println("41")
+// 環境条件リクエスト構造体
+type environmentConditionRequest struct {
+    baseConditionRequest
+    Region string `json:"region"`
+    Count int `json:"count"`
+}
 
-		// 対象のユーザデータを取得（存在チェック）
-        userData, err := model.SelectUserByPrimaryKey(userID)
-        if err != nil {
-            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch user data")
-        }
-        if userData == nil {
-            return echo.NewHTTPError(http.StatusNotFound, "User not found")
-        }
-        log.Println("52")
-
-		if err := model.InsertUserCondition(&model.UserCondition{
-            UserID: userID,
-            ConditionID: req.Condition_id,
-            StartDate: req.Start_date,
-            EndDate: req.End_date,
-            DamagePoint: req.Damage_points,
-            
-        }); err != nil {
-            return err
-        
-        }
-		return c.NoContent(http.StatusOK)
+// 共通の前処理
+func commonConditionPreprocess(c echo.Context, req interface{}) (string, error) {
+	if err := c.Bind(req); err != nil {
+		return "", echo.NewHTTPError(http.StatusBadRequest, "Invalid request body format")
 	}
+	// Contextから認証済みのユーザIDを取得
+	ctx := c.Request().Context()
+	userID := auth.GetUserIDFromContext(ctx)
+	if userID == "" {
+		return "", echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
+	}
+	// ここで共通の前処理を行う
+	return userID, nil
 }
-// 特定のユーザーのuser_conditionの取得	
-func HandleuserConditionGet() echo.HandlerFunc {
+
+
+// サイクル条件の登録
+func HandleCycleConditionCreate() echo.HandlerFunc {
     return func(c echo.Context) error {
-        ctx := c.Request().Context()
-        userID := auth.GetUserIDFromContext(ctx)
+        req := &cycleConditionRequest{}
+        userID, err := commonConditionPreprocess(c, req)
+        if err != nil {
+            return err
+        }
+        
+        userCondition, err := convertToUserCondition(req,userID)
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to convert request: "+err.Error())
+        }
+        
+        // UserIDをUserCondition構造体に設定
+        userCondition.UserID = userID
+
+        if err := model.InsertCycleCondition(userCondition); err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to insert cycle condition: "+err.Error())
+        }
+
+        return c.NoContent(http.StatusOK)
+    }
+}
+
+
+// 環境条件の登録
+func HandleEnvironmentConditionCreate() echo.HandlerFunc {
+    return func(c echo.Context) error {
+        req := &environmentConditionRequest{}
+        userID, err := commonConditionPreprocess(c, req) // userID を受け取る
+        if err != nil {
+            return err
+        }
+
+        userCondition, err := convertToUserCondition(req, userID) // convertToUserCondition 関数に userID を渡す
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to convert request: "+err.Error())
+        }
+
+        if err := model.InsertEnvironmentCondition(userCondition); err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to insert environment condition: "+err.Error())
+        }
+        
+        return c.NoContent(http.StatusOK)
+    }
+}
+
+// リクエストをUserConditionに変換
+func convertToUserCondition(req interface{}, userID string) (*model.UserCondition, error) {
+    var uc model.UserCondition
+    
+    // conditionIDを取得するための一時変数を初期化します。
+    var conditionID int
+
+    // reqの型に応じて、conditionIDを取得します。
+    switch v := req.(type) {
+    case *cycleConditionRequest:
+        conditionID = v.ConditionID
+    case *environmentConditionRequest:
+        conditionID = v.ConditionID
+    default:
+        return nil, errors.New("invalid request type")
+    }
+
+    // conditionIDを使用して、条件のタイプと名前を取得します。
+    conditionTypeName, err := model.GetConditionTypeName(conditionID)
+    if err != nil {
+        return nil, err
+    }
+
+    // 再度、reqの型に応じた処理を行います。
+    switch v := req.(type) {
+    case *cycleConditionRequest:
+        startDate, err := time.Parse("2006-01-02", v.StartDate)
+        if err != nil {
+            return nil, err
+        }
+        uc = model.UserCondition{
+            UserID:      userID,
+            ConditionID: v.ConditionID,
+            Name:        conditionTypeName.Name, // Nameを設定
+            StartDate:   startDate,
+            Duration:    v.Duration,
+            CycleLength: v.CycleLength,
+        }
+    case *environmentConditionRequest:
+        startDate, err := time.Parse("2006-01-02", v.StartDate)
+        if err != nil {
+            return nil, err
+        }
+        uc = model.UserCondition{
+            UserID:      userID,
+            ConditionID: v.ConditionID,
+            Name:        conditionTypeName.Name, // Nameを設定
+            StartDate:   startDate,
+            Region:      v.Region,
+            Count:       v.Count,
+        }
+    }
+
+    return &uc, nil
+}
+
+//　特定のユーザーのすべてのcinditionを取得
+func HandleUserConditionGet() echo.HandlerFunc {
+    return func(c echo.Context) error {
+        userID := auth.GetUserIDFromContext(c.Request().Context())
         if userID == "" {
             return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
         }
-        log.Println("userIDisoK")
-        // 対象のユーザデータを取得（存在チェック）
-        userData, err := model.SelectUserByPrimaryKey(userID)
+        conditions, err := model.GetUserConditions(userID)
         if err != nil {
-            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch user data")
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get user conditions: "+err.Error())
         }
-        if userData == nil {
-            return echo.NewHTTPError(http.StatusNotFound, "User not found")
-        }
-        log.Println("userDataisoK")
-        userConditions, err := model.GetUserCondition(userID)
-        if err != nil {
-            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch user conditions")
-        }
-        return c.JSON(http.StatusOK, userConditions)
+        return c.JSON(http.StatusOK, conditions)
     }
 }
 

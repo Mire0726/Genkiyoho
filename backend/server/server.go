@@ -1,12 +1,12 @@
 package server
 
 import (
-
 	"log"
 	"net/http"
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
 	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
+	"github.com/Mire0726/Genkiyoho/backend/server/weather"
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -26,15 +26,6 @@ func Serve(addr string) {
         AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
         AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
     }))
-    
-
-    // e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-    //     AllowOrigins: []string{"http://localhost:3000"}, // フロントエンドのオリジンを許可
-    //     AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, // 必要なHTTPメソッドを許可
-    //     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization}, // 必要なヘッダーを許可
-    // }))
-    
-    
 
 
     // ルーティングの設定
@@ -49,9 +40,11 @@ func Serve(addr string) {
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
     authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API
     authAPI.PUT("/users/me", handler.HandleUserUpdate())  // ユーザ情報更新API
-    authAPI.POST("users/me/condition",handler.HandleConditionCreate()) 
-    authAPI.GET("users/me/condition",handler.HandleuserConditionGet())
-    
+    authAPI.POST("users/me/condition/cycle",handler.HandleCycleConditionCreate()) // サイクル条件登録API
+    authAPI.POST("users/me/condition/environment",handler.HandleEnvironmentConditionCreate()) // 環境条件登録API
+    authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 本日の状態取得API
+   
+    weather.Pressure()
 
     /* ===== サーバの起動 ===== */
 
