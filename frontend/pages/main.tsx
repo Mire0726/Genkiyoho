@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
-import { format, isWithinInterval, parseISO } from "date-fns";
+import { isWithinInterval, parseISO } from "date-fns";
 import styles from "./main.module.scss"; // SCSSモジュールのインポート
 
 type Condition = {
@@ -20,11 +20,11 @@ export default function Main() {
     if (!token) {
       router.push("/login"); // トークンがなければログインページにリダイレクト
     } else {
-      fetchConditions(token);
+      fetchConditionsDisplay(token);
     }
   }, [router]);
 
-  const fetchConditions = async (token: string) => {
+  const fetchConditionsDisplay = async (token: string) => {
     const url = "http://localhost:8080";
     console.log("Fetching conditions...");
     const options: AxiosRequestConfig = {

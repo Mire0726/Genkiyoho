@@ -47,6 +47,30 @@ paths:
                 properties:
                   token:
                     type: string
+  /conditions:
+    get:
+      tags:
+        - condition
+      summary: "全コンディションを取得"
+      responses:
+        "200":
+          description: "コンディションリストの取得に成功しました"
+  /conditions/cycle:
+    get:
+      tags:
+        - condition
+      summary: "サイクルコンディションを取得"
+      responses:
+        "200":
+          description: "サイクルコンディションの取得に成功しました"
+  /conditions/environment:
+    get:
+      tags:
+        - condition
+      summary: "環境コンディションを取得"
+      responses:
+        "200":
+          description: "環境コンディションの取得に成功しました"
   /users/me:
     get:
       tags:
@@ -171,7 +195,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CycleConditionRequest'
+              $ref: "#/components/schemas/CycleConditionRequest"
       responses:
         "200":
           description: サイクル条件が正常に作成されました
@@ -199,7 +223,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentConditionRequest'
+              $ref: "#/components/schemas/EnvironmentConditionRequest"
       responses:
         "200":
           description: 環境条件が正常に作成されました

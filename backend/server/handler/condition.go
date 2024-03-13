@@ -71,7 +71,6 @@ func HandleCycleConditionCreate() echo.HandlerFunc {
     }
 }
 
-
 // 環境条件の登録
 func HandleEnvironmentConditionCreate() echo.HandlerFunc {
     return func(c echo.Context) error {
@@ -150,7 +149,7 @@ func convertToUserCondition(req interface{}, userID string) (*model.UserConditio
     return &uc, nil
 }
 
-//　特定のユーザーのすべてのcinditionを取得
+//　特定のユーザーのすべてのconditionを取得
 func HandleUserConditionGet() echo.HandlerFunc {
     return func(c echo.Context) error {
         userID := auth.GetUserIDFromContext(c.Request().Context())
@@ -165,8 +164,35 @@ func HandleUserConditionGet() echo.HandlerFunc {
     }
 }
 
-//conditionの削除
+//conditionsの取得
+func HandleConditionsGet() echo.HandlerFunc {
+    return func(c echo.Context) error {
+        conditions, err := model.GetConditions()
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get conditions: "+err.Error())
+        }
+        return c.JSON(http.StatusOK, conditions)
+    }
+}
 
-//conditionの更新(ダメージなど)
+func HandleCycleConditionGet() echo.HandlerFunc {
+    return func(c echo.Context) error {
+        cycle_conditions, err := model.GetCycleConditions()
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get conditions: "+err.Error())
+        }
+        return c.JSON(http.StatusOK, cycle_conditions)
+    }
+}
+
+func HandleEnvironmentConditionGet() echo.HandlerFunc {
+    return func(c echo.Context) error {
+        environment_conditions, err := model.GetEnvironmentConditions()
+        if err != nil {
+            return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get conditions: "+err.Error())
+        }
+        return c.JSON(http.StatusOK, environment_conditions)
+    }
+}
 
 
