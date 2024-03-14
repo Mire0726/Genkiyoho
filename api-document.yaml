@@ -241,6 +241,38 @@ paths:
           description: 認証に失敗しました
       security:
         - tokenAuth: []
+  /users/me/condition/today/cycle:
+    get:
+      summary: "特定のユーザーの今日のサイクル条件を取得"
+      tags:
+        - User Condition
+      responses:
+        "200":
+          description: サイクル条件が正常に取得されました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  condition_id:
+                    type: integer
+                    description: "コンディションID"
+                  start_date:
+                    type: string
+                    format: date
+                    description: "開始日"
+                  duration:
+                    type: integer
+                    description: "期間（日数）"
+                  cycle_length:
+                    type: integer
+                    description: "周期の長さ（日数）"
+        "400":
+          description: 不正なリクエスト
+        "401":
+          description: 認証に失敗しました
+      security:
+        - tokenAuth: []
 components:
   schemas:
     CycleConditionRequest:

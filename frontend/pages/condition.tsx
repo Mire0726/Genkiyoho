@@ -26,7 +26,7 @@ export default function ConditionRegistration() {
   const [selectedConditionId, setSelectedConditionId] = useState<number | null>(
     null
   );
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [duration, setDuration] = useState<number>(0);
   const [cycleLength, setCycleLength] = useState<number>(0);
   const [damage_point, setDamage_point] = useState<number>(0);
@@ -132,7 +132,7 @@ export default function ConditionRegistration() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/users/me/condition/enviroment",
+        "http://localhost:8080/users/me/condition/environment",
         {
           condition_id: selectedConditionId,
           start_date: startDate, // 開始日
@@ -146,6 +146,7 @@ export default function ConditionRegistration() {
           },
         }
       );
+      console.log("response", response.data);
       // ここでレスポンスに基づいて適切な処理を行います
       console.log("Enviroment Condition Created: ", response.data);
     } catch (error) {
@@ -173,7 +174,9 @@ export default function ConditionRegistration() {
                   handleConditionSelection(condition.ID, condition.Name)
                 }
                 className={
-                  selectedConditionId === condition.ID ? styles.selected : ""
+                  selectedConditionId === condition.ID
+                    ? `${styles.conditionButton} ${styles.selectedConditionButton}` // 選択されたボタンのスタイルを適用
+                    : styles.conditionButton
                 }
               >
                 {condition.Name}
@@ -228,12 +231,15 @@ export default function ConditionRegistration() {
                   handleConditionSelection(condition.ID, condition.Name)
                 }
                 className={
-                  selectedConditionId === condition.ID ? styles.selected : ""
+                  selectedConditionId === condition.ID
+                    ? `${styles.conditionButton} ${styles.selectedConditionButton}` // 選択されたボタンのスタイルを適用
+                    : styles.conditionButton
                 }
               >
                 {condition.Name}
               </button>
             ))}
+
             <div className="enviromentconditionfrom">
               <label>
                 居場所(ローマ字で、都道府県で入力)：

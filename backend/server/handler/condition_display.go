@@ -1,14 +1,43 @@
 package handler
 
 import (
-	"errors"
+	"net/http"
+	"time"
+
+	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
+	"github.com/Mire0726/Genkiyoho/backend/server/model"
+	"github.com/labstack/echo/v4"
 )
+func isInCurrentCycle(startDate time.Time, duration, cycleLength int) bool {
+    today := time.Now()
 
-//　ユーザーの本日の状態を取得 
-func HandleUserTodayConditionGet(userID string) (string, error) {
-	// HandleUserConditionGetから、本日の状態のみを取得
-	// 本日の日付を取得
-	// 本日の日付を使用して、本日の状態を取得
+    // EndDateが定義されていない場合、サイクルに基づいて終了日を計算
+    expectedEndDate := startDate.AddDate(0, 0, duration+cycleLength-1)
 
-	return "", errors.New("Not implemented")
+    // 今日の日付が開始日と計算された終了日の間にあるかを判定
+    return !today.Before(startDate) && !today.After(expectedEndDate)
+}
+
+func HandleUserTodayCycleConditionGet(c echo.Context) error {
+	userID := auth.GetUserIDFromContext(c.Request().Context())
+	if userID == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
+	}
+	conditions, err := model.GetUserConditions(userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get user conditions: "+err.Error())
+	}
+
+	var todayConditions_c []model.UserCondition
+	for _, condition := range conditions {
+		startDate, err := time.Parse(time.RFC3339, condition.StartDate.Format(time.RFC3339)) // Convert condition.StartDate to string
+		if err != nil {
+			continue // 日付のパースに失敗した場合は、このコンディションをスキップします。
+		}
+		if isInCurrentCycle(startDate, condition.Duration, condition.CycleLength) {
+			todayConditions_c = append(todayConditions_c, condition)
+		}
+	}
+
+	return c.JSON(http.StatusOK, todayConditions_c)
 }

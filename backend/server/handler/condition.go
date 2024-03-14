@@ -149,6 +149,7 @@ func convertToUserCondition(req interface{}, userID string) (*model.UserConditio
     return &uc, nil
 }
 
+
 //　特定のユーザーのすべてのconditionを取得
 func HandleUserConditionGet() echo.HandlerFunc {
     return func(c echo.Context) error {
@@ -163,6 +164,8 @@ func HandleUserConditionGet() echo.HandlerFunc {
         return c.JSON(http.StatusOK, conditions)
     }
 }
+
+
 
 //conditionsの取得
 func HandleConditionsGet() echo.HandlerFunc {

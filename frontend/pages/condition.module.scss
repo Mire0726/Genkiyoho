@@ -22,7 +22,6 @@
     border-radius: 20px;
     cursor: pointer;
   }
-
 }
 
 .conditionContainer {
@@ -46,6 +45,12 @@
   flex-direction: column;
   justify-content: space-between; // 内容物を均等に分散させる
   color: rgb(70, 69, 69);
+}
+
+.selectedConditionButton {
+  background-color: #4cb7b4; /* 選択状態の背景色、必要に応じて変更してください */
+  color: white; /* 文字色、必要に応じて変更してください */
+  // その他のスタイルを追加することもできます
 }
 
 // .environmentConditionButtons,
