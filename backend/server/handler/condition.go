@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -21,6 +22,7 @@ type cycleConditionRequest struct {
     baseConditionRequest
     Duration int `json:"duration"`
     CycleLength int `json:"cycle_length"`
+    DamagePoint int `json:"damage_point"`
 }
 
 // 環境条件リクエスト構造体
@@ -28,6 +30,7 @@ type environmentConditionRequest struct {
     baseConditionRequest
     Region string `json:"region"`
     Count int `json:"count"`
+    DamagePoint int `json:"damage_point"`
 }
 
 // 共通の前処理
@@ -75,6 +78,7 @@ func HandleCycleConditionCreate() echo.HandlerFunc {
 func HandleEnvironmentConditionCreate() echo.HandlerFunc {
     return func(c echo.Context) error {
         req := &environmentConditionRequest{}
+        fmt.Printf("Received request: %+v\n", req)
         userID, err := commonConditionPreprocess(c, req) // userID を受け取る
         if err != nil {
             return err
@@ -88,7 +92,6 @@ func HandleEnvironmentConditionCreate() echo.HandlerFunc {
         if err := model.InsertEnvironmentCondition(userCondition); err != nil {
             return echo.NewHTTPError(http.StatusInternalServerError, "Failed to insert environment condition: "+err.Error())
         }
-        
         return c.NoContent(http.StatusOK)
     }
 }
@@ -130,6 +133,7 @@ func convertToUserCondition(req interface{}, userID string) (*model.UserConditio
             StartDate:   startDate,
             Duration:    v.Duration,
             CycleLength: v.CycleLength,
+            DamagePoint: v.DamagePoint,
         }
     case *environmentConditionRequest:
         startDate, err := time.Parse("2006-01-02", v.StartDate)
@@ -138,14 +142,14 @@ func convertToUserCondition(req interface{}, userID string) (*model.UserConditio
         }
         uc = model.UserCondition{
             UserID:      userID,
-            ConditionID: v.ConditionID,
             Name:        conditionTypeName.Name, // Nameを設定
             StartDate:   startDate,
             Region:      v.Region,
             Count:       v.Count,
+            DamagePoint: v.DamagePoint,
         }
     }
-
+    fmt.Println(uc)
     return &uc, nil
 }
 

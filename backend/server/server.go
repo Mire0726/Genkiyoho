@@ -46,6 +46,7 @@ func Serve(addr string) {
     authAPI.POST("users/me/condition/environment",handler.HandleEnvironmentConditionCreate()) // 環境条件登録API
     authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 本日の状態取得API
     authAPI.GET("users/me/condition/today/cycle",handler.HandleUserTodayCycleConditionGet) // 本日のサイクル条件取得API
+    
     weather.Pressure()
 
     /* ===== サーバの起動 ===== */

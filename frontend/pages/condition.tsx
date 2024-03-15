@@ -146,6 +146,14 @@ export default function ConditionRegistration() {
           },
         }
       );
+      console.log({
+        condition_id: selectedConditionId,
+        start_date: startDate,
+        region: region,
+        count: 0,
+        damage_point: damage_point,
+      });
+
       console.log("response", response.data);
       // ここでレスポンスに基づいて適切な処理を行います
       console.log("Enviroment Condition Created: ", response.data);

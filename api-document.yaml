@@ -291,6 +291,9 @@ components:
         cycle_length:
           type: integer
           description: "周期の長さ（日数）"
+        damage_point:
+          type: integer
+          description: "ダメージポイント"
       required:
         - condition_id
         - condition_name
@@ -304,9 +307,6 @@ components:
         condition_id:
           type: integer
           description: "コンディションID"
-        condition_name:
-          type: string
-          description: "コンディションの名前"
         start_date:
           type: string
           format: date
@@ -317,9 +317,11 @@ components:
         count:
           type: integer
           description: "カウント（例：花粉の数）"
+        damage_point:
+          type: integer
+          description: "ダメージポイント"
       required:
         - condition_id
-        - condition_name
         - start_date
         - region
         - count
