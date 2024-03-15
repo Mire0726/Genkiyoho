@@ -47,7 +47,7 @@ func Serve(addr string) {
     authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 本日の状態取得API
     authAPI.GET("users/me/condition/today/cycle",handler.HandleUserTodayCycleConditionGet) // 本日のサイクル条件取得API
     
-    weather.Pressure()
+    weather.CheckPollen("Tokyo")
 
     /* ===== サーバの起動 ===== */
 

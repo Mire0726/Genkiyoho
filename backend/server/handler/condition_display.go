@@ -6,6 +6,7 @@ import (
 
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"github.com/Mire0726/Genkiyoho/backend/server/model"
+	"github.com/Mire0726/Genkiyoho/backend/server/weather"
 	"github.com/labstack/echo/v4"
 )
 func isInCurrentCycle(startDate time.Time, duration, cycleLength int) bool {
@@ -17,6 +18,8 @@ func isInCurrentCycle(startDate time.Time, duration, cycleLength int) bool {
     // 今日の日付が開始日と計算された終了日の間にあるかを判定
     return !today.Before(startDate) && !today.After(expectedEndDate)
 }
+
+
 
 func HandleUserTodayCycleConditionGet(c echo.Context) error {
 	userID := auth.GetUserIDFromContext(c.Request().Context())
@@ -40,4 +43,34 @@ func HandleUserTodayCycleConditionGet(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, todayConditions_c)
+}
+
+func HandleUserTodayEnvironmentConditionGet(c echo.Context) error {
+	userID := auth.GetUserIDFromContext(c.Request().Context())
+	if userID == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "userID is empty")
+	}
+	conditions, err := model.GetUserConditions(userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get user conditions: "+err.Error())
+	}
+
+	var todayConditions_e []model.UserCondition
+	for _, condition := range conditions { 
+		if condition.ConditionID == 1003 {
+			c:= condition.Region
+			if weather.CheckPollen(c){
+			todayConditions_e = append(todayConditions_e, condition)
+			}
+		}
+		if condition.ConditionID == 1004 {
+			c:= condition.Region
+			if weather.CheckPressure(c){
+			todayConditions_e = append(todayConditions_e, condition)
+			}
+		}
+		
+	}
+
+	return c.JSON(http.StatusOK, todayConditions_e)
 }
