@@ -16,8 +16,6 @@ type WeatherResponse struct {
 	} `json:"main"`
 }
 
-
-
 // 指定した都市の現在の気圧を基にブール値を返す関数
 func CheckPressure(city string) bool {
 

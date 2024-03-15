@@ -47,6 +47,30 @@ paths:
                 properties:
                   token:
                     type: string
+  /conditions:
+    get:
+      tags:
+        - condition
+      summary: "全コンディションを取得"
+      responses:
+        "200":
+          description: "コンディションリストの取得に成功しました"
+  /conditions/cycle:
+    get:
+      tags:
+        - condition
+      summary: "サイクルコンディションを取得"
+      responses:
+        "200":
+          description: "サイクルコンディションの取得に成功しました"
+  /conditions/environment:
+    get:
+      tags:
+        - condition
+      summary: "環境コンディションを取得"
+      responses:
+        "200":
+          description: "環境コンディションの取得に成功しました"
   /users/me:
     get:
       tags:
@@ -171,7 +195,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CycleConditionRequest'
+              $ref: "#/components/schemas/CycleConditionRequest"
       responses:
         "200":
           description: サイクル条件が正常に作成されました
@@ -199,7 +223,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentConditionRequest'
+              $ref: "#/components/schemas/EnvironmentConditionRequest"
       responses:
         "200":
           description: 環境条件が正常に作成されました
@@ -211,6 +235,38 @@ paths:
                   message:
                     type: string
                     example: "Environment condition successfully created."
+        "400":
+          description: 不正なリクエスト
+        "401":
+          description: 認証に失敗しました
+      security:
+        - tokenAuth: []
+  /users/me/condition/today/cycle:
+    get:
+      summary: "特定のユーザーの今日のサイクル条件を取得"
+      tags:
+        - User Condition
+      responses:
+        "200":
+          description: サイクル条件が正常に取得されました
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  condition_id:
+                    type: integer
+                    description: "コンディションID"
+                  start_date:
+                    type: string
+                    format: date
+                    description: "開始日"
+                  duration:
+                    type: integer
+                    description: "期間（日数）"
+                  cycle_length:
+                    type: integer
+                    description: "周期の長さ（日数）"
         "400":
           description: 不正なリクエスト
         "401":
@@ -235,6 +291,9 @@ components:
         cycle_length:
           type: integer
           description: "周期の長さ（日数）"
+        damage_point:
+          type: integer
+          description: "ダメージポイント"
       required:
         - condition_id
         - condition_name
@@ -248,9 +307,6 @@ components:
         condition_id:
           type: integer
           description: "コンディションID"
-        condition_name:
-          type: string
-          description: "コンディションの名前"
         start_date:
           type: string
           format: date
@@ -261,9 +317,11 @@ components:
         count:
           type: integer
           description: "カウント（例：花粉の数）"
+        damage_point:
+          type: integer
+          description: "ダメージポイント"
       required:
         - condition_id
-        - condition_name
         - start_date
         - region
         - count

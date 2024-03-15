@@ -35,15 +35,18 @@ func Serve(addr string) {
     e.POST("/users/me", handler.HandleUserCreate()) // ユーザ登録API
     e.POST("/users/login", handler.HandleUserLogin) // ログインAPI
     e.GET("/users", handler.HandleGetUser()) // ユーザ一覧取得API
-
-
+    e.GET("conditions",handler.HandleConditionsGet()) // 条件一覧取得API
+    e.GET("conditions/cycle",handler.HandleCycleConditionGet()) // サイクル条件一覧取得API
+    e.GET("conditions/environment",handler.HandleEnvironmentConditionGet()) // 環境条件一覧取得API
+    
     authAPI := e.Group("", middleware.AuthenticateMiddleware())
     authAPI.GET("/users/me", handler.HandleUserGet()) // ユーザ情報取得API
     authAPI.PUT("/users/me", handler.HandleUserUpdate())  // ユーザ情報更新API
     authAPI.POST("users/me/condition/cycle",handler.HandleCycleConditionCreate()) // サイクル条件登録API
     authAPI.POST("users/me/condition/environment",handler.HandleEnvironmentConditionCreate()) // 環境条件登録API
     authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 本日の状態取得API
-   
+    authAPI.GET("users/me/condition/today/cycle",handler.HandleUserTodayCycleConditionGet) // 本日のサイクル条件取得API
+    
     weather.Pressure()
 
     /* ===== サーバの起動 ===== */

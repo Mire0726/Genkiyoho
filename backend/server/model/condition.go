@@ -20,7 +20,11 @@ type UserCondition struct {
     Count       int       // 環境条件のカウント数（例えば花粉の数）
     DamagePoint int       // 条件によるダメージポイント（任意で使用）
 }
-
+type Condition struct {
+    ID   int
+    Name string
+    Type string
+}
 type ConditionTypeName struct {
     Type    string
     Name string
@@ -38,8 +42,6 @@ func GetConditionTypeName(conditionID int) (*ConditionTypeName, error) {
 
     return &ConditionTypeName{Type: conditionType, Name: conditionName}, nil
 }
-
-
 // InsertUserCondition はユーザーの条件を登録します。
 func InsertUserCondition(record *UserCondition) error {
     var conditionType,conditionName string
@@ -148,4 +150,71 @@ func GetUserConditions(userID string) ([]UserCondition, error) {
 	}
 
 	return userConditions, nil
+}
+
+// GetConditions はすべての条件を取得します。
+func GetConditions() ([]Condition, error) {
+    var conditions []Condition
+
+    query := "SELECT id, name, type FROM conditions"
+    rows, err := db.Conn.Query(query)
+    if err != nil {
+        log.Printf("Error retrieving conditions from database: %v", err)
+        return nil, err
+    }
+    defer rows.Close()
+    for rows.Next() {
+        var c Condition
+        err := rows.Scan(&c.ID, &c.Name, &c.Type)
+        if err != nil {
+            log.Printf("Error scanning conditions: %v", err)
+            continue
+        }
+        conditions = append(conditions, c)
+    }
+    return conditions, nil
+}
+
+func GetCycleConditions() ([]Condition, error) {
+    var cycle_conditions []Condition
+
+    query := "SELECT id, name, type FROM conditions WHERE type = 'cycle'"
+    rows, err := db.Conn.Query(query)
+    if err != nil {
+        log.Printf("Error retrieving cycle_conditions from database: %v", err)
+        return nil, err
+    }
+    defer rows.Close()
+    for rows.Next() {
+        var c Condition
+        err := rows.Scan(&c.ID, &c.Name, &c.Type)
+        if err != nil {
+            log.Printf("Error scanning conditions: %v", err)
+            continue
+        }
+        cycle_conditions = append(cycle_conditions, c)
+    }
+    return cycle_conditions, nil
+}
+
+func GetEnvironmentConditions() ([]Condition, error) {
+    var environment_conditions []Condition
+
+    query := "SELECT id, name, type FROM conditions WHERE type = 'environment'"
+    rows, err := db.Conn.Query(query)
+    if err != nil {
+        log.Printf("Error retrieving environment_conditions from database: %v", err)
+        return nil, err
+    }
+    defer rows.Close()
+    for rows.Next() {
+        var c Condition
+        err := rows.Scan(&c.ID, &c.Name, &c.Type)
+        if err != nil {
+            log.Printf("Error scanning conditions: %v", err)
+            continue
+        }
+        environment_conditions = append(environment_conditions, c)
+    }
+    return environment_conditions, nil
 }
