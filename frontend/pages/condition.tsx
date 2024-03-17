@@ -192,7 +192,7 @@ export default function ConditionRegistration() {
             ))}
           </div>
           <div className="cycleconditionfrom">
-            <label>
+            <label className={styles.formLabel}>
               前回の開始日：
               <input
                 type="date"
@@ -200,7 +200,7 @@ export default function ConditionRegistration() {
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </label>
-            <label>
+            <label className={styles.formLabel}>
               期間：
               <input
                 type="number"
@@ -208,7 +208,7 @@ export default function ConditionRegistration() {
                 onChange={(e) => setDuration(Number(e.target.value))}
               />
             </label>
-            <label>
+            <label className={styles.formLabel}>
               平均サイクル：
               <input
                 type="number"
@@ -216,7 +216,7 @@ export default function ConditionRegistration() {
                 onChange={(e) => setCycleLength(Number(e.target.value))}
               />
             </label>
-            <label>
+            <label className={styles.formLabel}>
               辛さ（数字で1〜100表してください）：
               <input
                 type="number"
@@ -226,7 +226,9 @@ export default function ConditionRegistration() {
                 onChange={(e) => setDamage_point(Number(e.target.value))}
               />
             </label>
-            <button onClick={handleCycleConditionSubmit}>Submit</button>
+            <label className={styles.formLabel}>
+              <button onClick={handleCycleConditionSubmit}>Submit</button>
+            </label>
           </div>
         </div>
 
@@ -249,7 +251,7 @@ export default function ConditionRegistration() {
             ))}
 
             <div className="enviromentconditionfrom">
-              <label>
+              <label className={styles.formLabel}>
                 居場所(ローマ字で、都道府県で入力)：
                 <input
                   type="text"
@@ -257,7 +259,7 @@ export default function ConditionRegistration() {
                   onChange={(e) => setRegion(e.target.value)}
                 />
               </label>
-              <label>
+              <label className={styles.formLabel}>
                 辛さ（数字で1〜100表してください）：
                 <input
                   type="number"
@@ -267,9 +269,11 @@ export default function ConditionRegistration() {
                   onChange={(e) => setDamage_point(Number(e.target.value))}
                 />
               </label>
-              <button onClick={handleEnvironmentConditionSubmit}>
-                環境条件を登録
-              </button>
+              <label className={styles.formLabel}>
+                <button onClick={handleEnvironmentConditionSubmit}>
+                  環境条件を登録
+                </button>
+              </label>
             </div>
           </div>
         </div>
