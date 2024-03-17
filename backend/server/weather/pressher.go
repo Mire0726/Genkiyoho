@@ -10,7 +10,7 @@ import (
 )
 
 // OpenWeather APIからのレスポンスを格納するための構造体
-type WeatherResponse struct {
+type PressureResponse struct {
 	Main struct {
 		Pressure float64 `json:"pressure"` // 気圧
 	} `json:"main"`
@@ -24,9 +24,9 @@ func CheckPressure(city string) bool {
 		log.Fatal("Error loading .env file")
 	}
 // OpenWeather APIキー（自分のAPIキーに置き換えてください）
-const weatherApiKey = "WEATHER_API_KEY"
+const pressureApiKey = "WEATHER_API_KEY"
 
-	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, weatherApiKey)
+	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, pressureApiKey)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -35,13 +35,13 @@ const weatherApiKey = "WEATHER_API_KEY"
 	defer resp.Body.Close()
 
 
-	var weather WeatherResponse
-	if err := json.NewDecoder(resp.Body).Decode(&weather); err != nil {
-		log.Fatalf("Error decoding weather data: %s", err)
+	var pressure PressureResponse
+	if err := json.NewDecoder(resp.Body).Decode(&pressure); err != nil {
+		log.Fatalf("Error decoding pressure data: %s", err)
 	}
 	
 
-	currentPressure := weather.Main.Pressure
+	currentPressure := pressure.Main.Pressure
 	averagePressure := 1013.0 // 平均気圧
 
 	// 気圧が平均から6〜10ヘクトパスカル下がっているか判定
