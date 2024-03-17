@@ -1,15 +1,18 @@
 package weather
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"strings"
 )
 
 
-func CheckPollen(Pre string) bool {
+func CheckPollen(Pre string) int{
 	cityCode := GetCityCodeFromPrefecture(Pre)
 	// 現在の日付をYYYYMMDD形式で取得
 	currentDate := time.Now().Format("20060102")
@@ -23,14 +26,41 @@ func CheckPollen(Pre string) bool {
 	response, err := http.Get(apiURL)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return false
+		return 0
 	}
+
 	defer response.Body.Close()
 
-	// レスポンスを処理します（ここではステータスコードのみ表示）
-	fmt.Println("Response Status Code:", response.StatusCode)
-	fmt.Println("Response :", response)
-	return true
+    r := csv.NewReader(response.Body)
+    // 最大花粉飛散量を記録する変数
+	maxPollen := 0
+
+	// CSVデータを1行ずつ読み込む
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break // ファイルの終わりに達した
+		}
+		if err != nil {
+			fmt.Println("Error reading CSV:", err)
+			return 0
+		}
+
+		// 花粉飛散量を取得して整数に変換
+		pollen, err := strconv.Atoi(record[len(record)-1])
+		if err != nil {
+			fmt.Println("Error converting pollen count:", err)
+			continue
+		}
+
+		// 最大値を更新
+		if pollen > maxPollen {
+			maxPollen = pollen
+		}
+	}
+
+	fmt.Println("Maximum pollen count for the day:", maxPollen)
+    return maxPollen
 }
 
 var PrefectureToCityCode = map[string]string{

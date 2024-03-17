@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
-import { isWithinInterval, parseISO } from "date-fns";
 import styles from "./main.module.scss"; // SCSSモジュールのインポート
 
 type Condition = {
   condition_name: string;
-  start_date: string;
-  end_date: string;
+  // start_date: string;
+  // end_date: string;
   damage_point: number;
 };
 export default function Main() {
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+  const [genkiHP, setGenkiHP] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,6 +21,7 @@ export default function Main() {
       router.push("/login"); // トークンがなければログインページにリダイレクト
     } else {
       fetchConditionsDisplay(token);
+      todayPoint(token);
     }
   }, [router]);
 
@@ -28,7 +29,7 @@ export default function Main() {
     const url = "http://localhost:8080";
     console.log("Fetching conditions...");
     const options: AxiosRequestConfig = {
-      url: `${url}/users/me/condition`,
+      url: `${url}/users/me/condition/today`,
       method: "GET",
       headers: {
         "x-token": token,
@@ -40,15 +41,8 @@ export default function Main() {
     try {
       const response = await axios(options);
       if (Array.isArray(response.data)) {
-        const today = new Date();
-        const filteredConditions = response.data.filter(
-          (condition: Condition) =>
-            isWithinInterval(today, {
-              start: parseISO(condition.start_date),
-              end: parseISO(condition.end_date),
-            })
-        );
-        setConditions(filteredConditions);
+        const data = response.data;
+        setConditions(data);
       } else {
         throw new TypeError("Received data is not an array");
       }
@@ -62,6 +56,31 @@ export default function Main() {
     console.log("Conditions after fetching:", conditions); // ログに状態を出力
   };
 
+  const todayPoint = async (token: string) => {
+    const url = "http://localhost:8080";
+    console.log("Fetching today's point...");
+    const options: AxiosRequestConfig = {
+      url: `${url}/users/me/condition/today/point`,
+      method: "GET",
+      headers: {
+        "x-token": token,
+      },
+    };
+
+    try {
+      const response = await axios(options);
+      const genkiHP = response.data;
+      console.log(`Today's Genki HP:`, genkiHP);
+      setGenkiHP(genkiHP); // コメントを解除して状態を更新
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Error fetching today's point:", error);
+      setErrorMessage(
+        "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
+      );
+    }
+  };
+
   const handleConditionClick = () => {
     router.push("/condition"); // コンディションページへのリダイレクト
   };
@@ -70,6 +89,15 @@ export default function Main() {
     <div className={styles.mainContainer}>
       <div className={styles.card}>
         <h1>今日の元気予報</h1>
+        <h2>
+          {genkiHP !== null && <p>{genkiHP}/100</p>} {/* 元気ポイントの表示 */}
+        </h2>
+        {/* Rest of your code */}
+        <img
+          src="/girl1.png"
+          alt="Description of image"
+          className={styles.cardImage}
+        />
         {errorMessage && <div className={styles.error}>{errorMessage}</div>}
       </div>
       <div className={styles.card}>
@@ -78,7 +106,7 @@ export default function Main() {
           <ul>
             {conditions.map((condition, index) => (
               <li key={index}>
-                {condition.condition_name}：{condition.damage_point}
+                {condition.condition_name}によりー{condition.damage_point}pt
               </li>
             ))}
           </ul>
