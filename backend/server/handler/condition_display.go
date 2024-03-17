@@ -105,8 +105,15 @@ func HandleUserTodayConditionGet(c echo.Context) error {
 			}
 			conditionDetails = append(conditionDetails, conditionDetail)
 		}
-		// ここに他の環境条件のチェックを追加することができます
+
+		if condition.ConditionID == 1006 && weather.CheckWeather(condition.Region) {
+			conditionDetail := map[string]interface{}{
+				"condition_name": condition.Name,
+				"damage_point":   condition.DamagePoint,
+			}
+			conditionDetails = append(conditionDetails, conditionDetail)
 	}
+}
 	return c.JSON(http.StatusOK, conditionDetails)
 }
 
