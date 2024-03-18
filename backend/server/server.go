@@ -6,8 +6,8 @@ import (
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
 	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
+	"github.com/Mire0726/Genkiyoho/backend/server/weather"
 
-	
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -52,6 +52,7 @@ func Serve(addr string) {
     authAPI.GET("users/me/condition/today/point",handler.HandleUserTodayPointGet) // 本日のポイント取得API
     /* ===== サーバの起動 ===== */
 
+    weather.CheckPollen("Tokyo")
 
     
 
