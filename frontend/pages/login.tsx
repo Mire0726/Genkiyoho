@@ -93,6 +93,11 @@ export default function Login() {
         />
         <button type="submit">登録</button>
       </form>
+      <img
+          src="/cat1.png"
+          alt="Description of image"
+          className={styles.cardImage}
+        />
     </>
   );
 }

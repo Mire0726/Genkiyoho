@@ -11,6 +11,7 @@ type Condition = {
 };
 export default function Main() {
   const [conditions, setConditions] = useState<Condition[]>([]);
+  const [allConditions, setAllConditions] = useState<Condition[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const [genkiHP, setGenkiHP] = useState(null);
@@ -22,6 +23,7 @@ export default function Main() {
     } else {
       fetchConditionsDisplay(token);
       todayPoint(token);
+      handlefetchConditions(token);
     }
   }, [router]);
 
@@ -81,6 +83,31 @@ export default function Main() {
     }
   };
 
+  const handlefetchConditions = async (token: string) => {
+    const url = "http://localhost:8080";
+    console.log("Fetching conditions...");
+    const options: AxiosRequestConfig = {
+      url: `${url}/users/me/condition`,
+      method: "GET",
+      headers: {
+        "x-token": token,
+      },
+    };
+
+    try {
+      const response = await axios(options);
+      const data = response.data;
+      console.log("allConditions:", data);
+      setAllConditions(data);
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Error fetching conditions:", error);
+      setErrorMessage(
+        "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
+      );
+    }
+  };
+
   const handleConditionClick = () => {
     router.push("/condition"); // コンディションページへのリダイレクト
   };
@@ -98,18 +125,30 @@ export default function Main() {
           alt="Description of image"
           className={styles.cardImage}
         />
-        {errorMessage && <div className={styles.error}>{errorMessage}</div>}
       </div>
-      <div className={styles.card}>
+      <div className={styles.cards}>
+      <div className={styles.cardmini}>
         <h2>予報詳細：</h2>
         <div className={styles.detail}>
           <ul>
             {conditions.map((condition, index) => (
               <li key={index}>
-                {condition.condition_name}によりー{condition.damage_point}pt
+                {condition.condition_name}で{condition.damage_point}pt
               </li>
             ))}
           </ul>
+        </div>
+        </div>
+        <div className={styles.cardmini}>
+        <h2>登録済みの体調</h2>
+        <div className={styles.detail}>
+        <ul>
+          {allConditions.map((allCondition, index) => (
+            <li key={index}>
+              {allCondition.Name}で-{allCondition.DamagePoint}pt
+            </li>
+          ))}
+        </ul>
         </div>
         <button
           className={styles.ConditionButton}
@@ -117,6 +156,7 @@ export default function Main() {
         >
           体調の新規登録
         </button>
+      </div>
       </div>
     </div>
   );

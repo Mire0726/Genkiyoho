@@ -129,7 +129,7 @@ func GetUserConditions(userID string) ([]UserCondition, error) {
 	}
 
 	// 環境条件を取得するクエリ
-	environmentQuery := `SELECT id, date AS start_date, region, count, damage_point FROM environment_conditions WHERE user_id = ?`
+	environmentQuery := `SELECT id,user_id, date AS start_date, region,name, count, damage_point FROM environment_conditions WHERE user_id = ?`
 	rows, err = db.Conn.Query(environmentQuery, userID)
 	if err != nil {
 		log.Printf("Error retrieving environment conditions from database: %v", err)
@@ -138,7 +138,7 @@ func GetUserConditions(userID string) ([]UserCondition, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var uc UserCondition
-		err := rows.Scan(&uc.ConditionID, &uc.StartDate, &uc.Region, &uc.Count,&uc.DamagePoint)
+		err := rows.Scan(&uc.ConditionID,&uc.UserID, &uc.StartDate, &uc.Region,&uc.Name, &uc.Count,&uc.DamagePoint)
 		if err != nil {
 			log.Printf("Error scanning environment conditions: %v", err)
 			continue
