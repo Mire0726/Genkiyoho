@@ -1,21 +1,24 @@
 # ベースイメージを指定
-FROM golang:latest
-
-LABEL maintainer="SumireInoue <violeta.jin.726@gmail.com>"
-# コンテナ内の作業ディレクトリを設定
+# ビルド環境
+FROM golang:1.16 as builder
 WORKDIR /app
 
-# ローカルのソースコードをコンテナにコピー
-COPY . .
+# go.mod と go.sum をコピー
+COPY go.mod ./
+COPY go.sum ./
 
-# 必要なパッケージをインストール
-RUN go mod download
+# 依存関係を解決
+RUN go mod tidy
+
+# アプリケーションのソースコードをコピー
+COPY . .
 
 # アプリケーションをビルド
 RUN go build -o main .
 
-# コンテナのポートを公開
-EXPOSE 8080
-
-# アプリケーションを実行
-CMD [ "./main"]
+# 実行環境
+FROM alpine:latest  
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+CMD ["./main"]

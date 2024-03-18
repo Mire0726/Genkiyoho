@@ -1,6 +1,6 @@
 module github.com/Mire0726/Genkiyoho/backend
 
-go 1.21.5
+go 1.16
 
 require (
 	entgo.io/ent v0.13.0
