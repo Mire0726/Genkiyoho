@@ -108,7 +108,7 @@ func GetUserConditions(userID string) ([]UserCondition, error) {
 	var userConditions []UserCondition
 
 	// サイクル条件を取得するクエリ
-	cycleQuery := `SELECT id, user_id, name, start_date, duration, cycle_length ,damage_point FROM cycle_conditions WHERE user_id = ?`
+	cycleQuery := `SELECT  user_id, name, start_date, duration, cycle_length ,damage_point FROM cycle_conditions WHERE user_id = ?`
 	rows, err := db.Conn.Query(cycleQuery, userID)
 	if err != nil {
 		log.Printf("Error retrieving cycle conditions from database: %v", err)
@@ -117,7 +117,7 @@ func GetUserConditions(userID string) ([]UserCondition, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var uc UserCondition
-		err := rows.Scan(&uc.ConditionID, &uc.UserID, &uc.Name, &uc.StartDate, &uc.Duration, &uc.CycleLength, &uc.DamagePoint)
+		err := rows.Scan(&uc.UserID, &uc.Name, &uc.StartDate, &uc.Duration, &uc.CycleLength, &uc.DamagePoint)
 		if err != nil {
 			log.Printf("Error scanning cycle conditions: %v", err)
 			continue

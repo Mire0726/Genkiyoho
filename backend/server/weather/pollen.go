@@ -23,8 +23,6 @@ func CheckPollen(Pre string) int{
 	// APIのエンドポイントを構築
 	apiURL := fmt.Sprintf("https://wxtech.weathernews.com/opendata/v1/pollen?citycode=%d&start=%d&end=%d", cityCode, currentDateInt, currentDateInt)
 
-	fmt.Println("API Request URL:", apiURL)
-
 	// HTTP GETリクエストを送信してみましょう
 	response, err := http.Get(apiURL)
 	if err != nil {
@@ -75,8 +73,6 @@ for {
 		maxPollen = pollen
 	}
 }
-
-	fmt.Println("Maximum pollen count for the day:", maxPollen)
 	return maxPollen
 }
 

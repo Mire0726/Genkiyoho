@@ -133,7 +133,7 @@ export default function Main() {
           <ul>
             {conditions.map((condition, index) => (
               <li key={index}>
-                {condition.condition_name}で{condition.damage_point}pt
+                {condition.condition_name}で-{condition.damage_point}pt
               </li>
             ))}
           </ul>
