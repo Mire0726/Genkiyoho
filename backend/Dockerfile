@@ -1,6 +1,7 @@
 # ベースイメージを指定
 FROM golang:latest
 
+LABEL maintainer="SumireInoue <violeta.jin.726@gmail.com>"
 # コンテナ内の作業ディレクトリを設定
 WORKDIR /app
 
@@ -17,4 +18,4 @@ RUN go build -o main .
 EXPOSE 8080
 
 # アプリケーションを実行
-CMD ["go", "run", "main.go"]
+CMD [ "./main"]
