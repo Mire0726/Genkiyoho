@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { format, isWithinInterval, parseISO } from "date-fns";
+import { format, isWithinInterval, parseISO, set } from "date-fns";
 import styles from "./condition.module.scss";
 import axios, { AxiosRequestConfig } from "axios";
 
@@ -114,6 +114,12 @@ export default function ConditionRegistration() {
           },
         }
       );
+      setSelectedCondition(null);
+      setSelectedConditionId(null);
+      setStartDate(format(new Date(), "yyyy-MM-dd"));
+      setDuration(0);
+      setCycleLength(0);
+      setDamage_point(0);
 
       // ここでレスポンスに基づいて適切な処理を行います
       console.log("Cycle Condition Created: ", response.data);
@@ -154,9 +160,11 @@ export default function ConditionRegistration() {
         damage_point: damage_point,
       });
 
-      console.log("response", response.data);
-      // ここでレスポンスに基づいて適切な処理を行います
-      console.log("Enviroment Condition Created: ", response.data);
+      setSelectedCondition(null);
+      setSelectedConditionId(null);
+      setStartDate(format(new Date(), "yyyy-MM-dd"));
+      setRegion("Tokyo");
+      setDamage_point(0);
     } catch (error) {
       console.error("Error posting enviroment condition", error);
     }

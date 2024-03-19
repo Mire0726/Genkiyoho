@@ -6,8 +6,8 @@ import (
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
 	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
+	"github.com/Mire0726/Genkiyoho/backend/server/weather"
 
-	
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -45,13 +45,14 @@ func Serve(addr string) {
     authAPI.PUT("/users/me", handler.HandleUserUpdate())  // ユーザ情報更新API
     authAPI.POST("users/me/condition/cycle",handler.HandleCycleConditionCreate()) // サイクル条件登録API
     authAPI.POST("users/me/condition/environment",handler.HandleEnvironmentConditionCreate()) // 環境条件登録API
-    authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 本日の状態取得API
+    authAPI.GET("users/me/condition",handler.HandleUserConditionGet()) // 
     authAPI.GET("users/me/condition/today/cycle",handler.HandleUserTodayCycleConditionGet) // 本日のサイクル条件取得API
     authAPI.GET("users/me/condition/today/environment",handler.HandleUserTodayEnvironmentConditionGet) // 本日の環境条件取得API
     authAPI.GET("users/me/condition/today",handler.HandleUserTodayConditionGet) // 本日の状態取得API
     authAPI.GET("users/me/condition/today/point",handler.HandleUserTodayPointGet) // 本日のポイント取得API
     /* ===== サーバの起動 ===== */
 
+    weather.CheckPollen("Tokyo")
 
     
 

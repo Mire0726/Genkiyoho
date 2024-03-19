@@ -1,6 +1,6 @@
 # ベースイメージを指定
 # ビルド環境
-FROM golang:1.16 as builder
+FROM golang:1.18 as builder
 WORKDIR /app
 
 # go.mod と go.sum をコピー

@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"fmt"
+
 	"net/http"
 	"time"
 
@@ -165,11 +166,10 @@ func HandleUserConditionGet() echo.HandlerFunc {
         if err != nil {
             return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get user conditions: "+err.Error())
         }
+        
         return c.JSON(http.StatusOK, conditions)
     }
 }
-
-
 
 //conditionsの取得
 func HandleConditionsGet() echo.HandlerFunc {
