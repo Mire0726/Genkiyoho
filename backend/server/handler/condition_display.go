@@ -94,24 +94,23 @@ func HandleUserTodayConditionGet(c echo.Context) error {
 				"damage_point":   condition.DamagePoint,
 			}
 			conditionDetails = append(conditionDetails, conditionDetail)
-		} else{
+		} else {
 		// 環境条件に一致するかチェック
-		if condition.Name == "花粉"  && (weather.CheckPollen(condition.Region)>0) {
-			if weather.CheckPollen(condition.Region)>0 && weather.CheckPollen(condition.Region)<30{
+		t := weather.CheckPollen(condition.Region)
+		if condition.Name == "花粉"  && t>0 {
+			if t>0 && t<30{
 				conditionDetail := map[string]interface{}{
 					"condition_name": condition.Name,
 					"damage_point":   condition.DamagePoint,
 				}
 				conditionDetails = append(conditionDetails, conditionDetail)
-			}
-			if weather.CheckPollen(condition.Region)>=30 && weather.CheckPollen(condition.Region)<60{
+			} else if t>=30 && t<60{
 				conditionDetail := map[string]interface{}{
 					"condition_name": condition.Name,
 					"damage_point":   condition.DamagePoint*2,
 				}
 				conditionDetails = append(conditionDetails, conditionDetail)
-			}
-			if weather.CheckPollen(condition.Region)>=60 && weather.CheckPollen(condition.Region)<100{
+			} else if t>=60 && t<100{
 				conditionDetail := map[string]interface{}{
 					"condition_name": condition.Name,
 					"damage_point":   condition.DamagePoint*3,
@@ -140,7 +139,6 @@ func HandleUserTodayConditionGet(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, conditionDetails)
 }
-
 
 func HandleUserTodayPointGet(c echo.Context) error {
     userID := auth.GetUserIDFromContext(c.Request().Context())

@@ -145,7 +145,7 @@ export default function Main() {
         <ul>
           {allConditions.map((allCondition, index) => (
             <li key={index}>
-              {allCondition.Name}で-{allCondition.DamagePoint}pt
+              {allCondition.Name}
             </li>
           ))}
         </ul>

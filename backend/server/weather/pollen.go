@@ -33,11 +33,11 @@ func CheckPollen(Pre string) int{
 	defer response.Body.Close()
 
     // レスポンスボディをバイトスライスとして読み込む
-bodyBytes, err := ioutil.ReadAll(response.Body)
-if err != nil {
-	fmt.Println("Failed to read response body:", err)
-	return 0
-}
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Failed to read response body:", err)
+		return 0
+	}
 
 // バイトスライスを文字列に変換し、CSVデータとして解析
 bodyString := string(bodyBytes)

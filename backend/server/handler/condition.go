@@ -171,8 +171,6 @@ func HandleUserConditionGet() echo.HandlerFunc {
     }
 }
 
-
-
 //conditionsの取得
 func HandleConditionsGet() echo.HandlerFunc {
     return func(c echo.Context) error {
