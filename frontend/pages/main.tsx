@@ -15,6 +15,7 @@ export default function Main() {
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const [genkiHP, setGenkiHP] = useState(null);
+  const [todayMassage, setTodayMassage] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -74,6 +75,9 @@ export default function Main() {
       const genkiHP = response.data;
       console.log(`Today's Genki HP:`, genkiHP);
       setGenkiHP(genkiHP); // コメントを解除して状態を更新
+      if (genkiHP <= 50) {
+        setTodayMassage("今日はゆっくりめに過ごしましょう");
+      }
       setErrorMessage("");
     } catch (error) {
       console.error("Error fetching today's point:", error);
@@ -119,6 +123,7 @@ export default function Main() {
         <h2>
           {genkiHP !== null && <p>{genkiHP}/100</p>} {/* 元気ポイントの表示 */}
         </h2>
+        {todayMassage && <p>{todayMassage}</p>} {/* メッセージの表示 */}
         {/* Rest of your code */}
         <img
           src="/girl1.png"
@@ -127,36 +132,34 @@ export default function Main() {
         />
       </div>
       <div className={styles.cards}>
-      <div className={styles.cardmini}>
-        <h2>予報詳細：</h2>
-        <div className={styles.detail}>
-          <ul>
-            {conditions.map((condition, index) => (
-              <li key={index}>
-                {condition.condition_name}で-{condition.damage_point}pt
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className={styles.cardmini}>
+          <h2>予報詳細：</h2>
+          <div className={styles.detail}>
+            <ul>
+              {conditions.map((condition, index) => (
+                <li key={index}>
+                  {condition.condition_name}で-{condition.damage_point}pt
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <div className={styles.cardmini}>
-        <h2>登録済みの体調</h2>
-        <div className={styles.detail}>
-        <ul>
-          {allConditions.map((allCondition, index) => (
-            <li key={index}>
-              {allCondition.Name}
-            </li>
-          ))}
-        </ul>
+          <h2>登録済みの体調</h2>
+          <div className={styles.detail}>
+          <ul>
+              {allConditions.map((allCondition, index) => (
+                <li key={index}>{allCondition.Name}</li>
+              ))}
+            </ul>
+          </div>
+          <button
+            className={styles.ConditionButton}
+            onClick={handleConditionClick}
+          >
+            体調の新規登録
+          </button>
         </div>
-        <button
-          className={styles.ConditionButton}
-          onClick={handleConditionClick}
-        >
-          体調の新規登録
-        </button>
-      </div>
       </div>
     </div>
   );

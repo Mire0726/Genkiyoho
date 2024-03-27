@@ -23,8 +23,8 @@ func CheckPressure(city string) bool {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-// OpenWeather APIキー（自分のAPIキーに置き換えてください）
-const pressureApiKey = "WEATHER_API_KEY"
+	// OpenWeather APIキー（自分のAPIキーに置き換えてください）
+	const pressureApiKey = "WEATHER_API_KEY"
 
 	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, pressureApiKey)
 
