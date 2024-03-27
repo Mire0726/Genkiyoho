@@ -52,7 +52,8 @@ func Serve(addr string) {
     authAPI.GET("users/me/condition/today/point",handler.HandleUserTodayPointGet) // 本日のポイント取得API
     /* ===== サーバの起動 ===== */
 
-    weather.CheckPollen("Tokyo")
+    weather.TestUV()
+
 
     
 

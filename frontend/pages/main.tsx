@@ -147,7 +147,7 @@ export default function Main() {
         <div className={styles.cardmini}>
           <h2>登録済みの体調</h2>
           <div className={styles.detail}>
-            <ul>
+          <ul>
               {allConditions.map((allCondition, index) => (
                 <li key={index}>{allCondition.Name}</li>
               ))}
