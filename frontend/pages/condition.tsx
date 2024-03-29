@@ -235,7 +235,7 @@ export default function ConditionRegistration() {
               />
             </label>
             <label className={styles.formLabel}>
-              <button onClick={handleCycleConditionSubmit}>Submit</button>
+              <button onClick={handleCycleConditionSubmit}>周期条件を登録</button>
             </label>
           </div>
         </div>
