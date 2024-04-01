@@ -8,6 +8,7 @@ type Condition = {
   // start_date: string;
   // end_date: string;
   damage_point: number;
+  Name : string;
 };
 export default function Main() {
   const [conditions, setConditions] = useState<Condition[]>([]);
