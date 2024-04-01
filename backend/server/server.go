@@ -6,7 +6,7 @@ import (
 
 	"github.com/Mire0726/Genkiyoho/backend/server/handler"
 	"github.com/Mire0726/Genkiyoho/backend/server/http/middleware"
-	"github.com/Mire0726/Genkiyoho/backend/server/weather"
+	// "github.com/Mire0726/Genkiyoho/backend/server/weather"
 
 	_ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 	"github.com/labstack/echo/v4"
@@ -51,11 +51,6 @@ func Serve(addr string) {
     authAPI.GET("users/me/condition/today",handler.HandleUserTodayConditionGet) // 本日の状態取得API
     authAPI.GET("users/me/condition/today/point",handler.HandleUserTodayPointGet) // 本日のポイント取得API
     /* ===== サーバの起動 ===== */
-
-    weather.TestUV()
-
-
-    
 
     log.Printf("Server running on %s", addr)
     if err := e.Start(addr); err != nil {

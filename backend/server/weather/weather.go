@@ -45,7 +45,6 @@ func CheckWeather(city string) bool {
 		for _, w := range listItem.Weather {
 			fmt.Println(w.Main)
 			if w.Main == "Rain" {
-				log.Println("Rain detected")
 				return true // 雨が検出されたらtrueを返す
 			} 
 	}
