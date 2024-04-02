@@ -39,7 +39,6 @@ func GetConditionTypeName(conditionID int) (*ConditionTypeName, error) {
         log.Printf("Error retrieving condition type and name from database: %v", err)
         return nil, err
     }
-
     return &ConditionTypeName{Type: conditionType, Name: conditionName}, nil
 }
 // InsertUserCondition はユーザーの条件を登録します。
