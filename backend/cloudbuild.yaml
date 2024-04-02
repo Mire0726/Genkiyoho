@@ -1,0 +1,8 @@
+steps:
+  # ビルドステップ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/genkiyoho-backend', '.']
+  # デプロイステップ
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['run', 'deploy', 'genkiyoho-backend', '--image', 'gcr.io/$PROJECT_ID/genkiyoho-backend', '--region', 'asia-northeast1', '--platform', 'managed']
