@@ -2,20 +2,22 @@
 FROM golang:1.18 AS builder
 WORKDIR /app
 
-# モジュールのコピー
+# backendフォルダ内のgo.modとgo.sumをコピー
 COPY go.mod .
 COPY go.sum .
 
 # 依存関係のダウンロード
-RUN go mod download
+RUN go mod tidy
 
-# ソースコードのコピー
+# # backendフォルダ内のソースコードをコピー
+# COPY backend/ .
+
+# .envファイルをコピー（もしルート直下にあるなら、この行は不要）
 COPY . .
 
-COPY .env ./
 
 # アプリケーションのビルド
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o main .
+RUN go build -o main .
 
 # 実行ステージ
 FROM alpine:latest
@@ -29,4 +31,3 @@ EXPOSE 8080
 
 # 実行コマンド
 CMD ["./main"]
-
