@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 )
 
 // OpenWeather APIからのレスポンスを格納するための構造体
@@ -19,10 +19,10 @@ type PressureResponse struct {
 // 指定した都市の現在の気圧を基にブール値を返す関数
 func CheckPressure(city string) bool {
 
-	err := godotenv.Load() 
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load() 
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	// OpenWeather APIキー（自分のAPIキーに置き換えてください）
 	const pressureApiKey = "WEATHER_API_KEY"
 
