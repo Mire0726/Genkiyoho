@@ -27,11 +27,7 @@ func Serve(addr string) {
         AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
         AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
     }))
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 9a8ffdde18c746017a38ca2506875f9fcd2dbd46
 
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
