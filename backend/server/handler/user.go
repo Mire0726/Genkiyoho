@@ -158,7 +158,7 @@ func HandleUserUpdate() echo.HandlerFunc {
     }
 }
 
-// HandleUserLogin はユーザーのログイン処理を行います。
+// HandleUserLogin はユーザーのログイン処理を行う
 func HandleUserLogin(c echo.Context) error {
     var req loginRequest
     if err := c.Bind(&req); err != nil {

@@ -8,8 +8,6 @@ import (
 
 	"github.com/Mire0726/Genkiyoho/backend/server/context/auth"
 	"github.com/Mire0726/Genkiyoho/backend/server/model"
-	// "github.com/Mire0726/Genkiyoho/backend/server/handler"
-	// _ "github.com/go-sql-driver/mysql" // MySQLドライバーをインポート
 )
 
 // AuthenticateMiddleware ユーザ認証を行ってContextへユーザID情報を保存する
@@ -34,7 +32,7 @@ func AuthenticateMiddleware() echo.MiddlewareFunc {
 			}
 			// ユーザIDをContextへ保存して以降の処理に利用する
 			c.SetRequest(c.Request().WithContext(auth.SetUserID(ctx, user.ID)))
-			fmt.Println("middleware,line37")
+			
 			// 次の処理
 			return next(c)
 		}

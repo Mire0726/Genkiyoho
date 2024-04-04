@@ -1,20 +1,32 @@
-# ベースイメージを指定
-FROM golang:latest
-
-# コンテナ内の作業ディレクトリを設定
+# ビルドステージ
+FROM golang:1.18 AS builder
 WORKDIR /app
 
-# ローカルのソースコードをコンテナにコピー
-COPY . .
+# モジュールのコピー
+COPY go.mod .
+COPY go.sum .
 
-# 必要なパッケージをインストール
+# 依存関係のダウンロード
 RUN go mod download
 
-# アプリケーションをビルド
-RUN go build -o main .
+# ソースコードのコピー
+COPY . .
 
-# コンテナのポートを公開
+COPY .env ./
+
+# アプリケーションのビルド
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o main .
+
+# 実行ステージ
+FROM alpine:latest
+WORKDIR /root/
+
+# ビルドステージからバイナリをコピー
+COPY --from=builder /app/main .
+
+# ポート8080を公開
 EXPOSE 8080
 
-# アプリケーションを実行
-CMD ["go", "run", "main.go"]
+# 実行コマンド
+CMD ["./main"]
+
