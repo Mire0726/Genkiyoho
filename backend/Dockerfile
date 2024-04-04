@@ -12,6 +12,8 @@ RUN go mod download
 # ソースコードのコピー
 COPY . .
 
+COPY .env ./
+
 # アプリケーションのビルド
 RUN CGO_ENABLED=0 GOOS=linux go build -v -o main .
 
