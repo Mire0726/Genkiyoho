@@ -28,15 +28,6 @@ func Serve(addr string) {
     }))
     
 
-    // e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-    //     AllowOrigins: []string{"http://localhost:3000"}, // フロントエンドのオリジンを許可
-    //     AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, // 必要なHTTPメソッドを許可
-    //     AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization}, // 必要なヘッダーを許可
-    // }))
-    
-    
-
-
     // ルーティングの設定
     e.GET("/", func(c echo.Context) error {
         return c.String(http.StatusOK, "Welcome to Genkiyoho!")
