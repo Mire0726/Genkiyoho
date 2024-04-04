@@ -1,24 +1,30 @@
-# ベースイメージを指定
-# ビルド環境
-FROM golang:1.18 as builder
+# ビルドステージ
+FROM golang:1.18 AS builder
 WORKDIR /app
 
-# go.mod と go.sum をコピー
-COPY go.mod ./
-COPY go.sum ./
+# モジュールのコピー
+COPY go.mod .
+COPY go.sum .
 
-# 依存関係を解決
-RUN go mod tidy
+# 依存関係のダウンロード
+RUN go mod download
 
-# アプリケーションのソースコードをコピー
+# ソースコードのコピー
 COPY . .
 
-# アプリケーションをビルド
-RUN go build -o main .
+# アプリケーションのビルド
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o main .
 
-# 実行環境
-FROM alpine:latest  
-RUN apk --no-cache add ca-certificates
+# 実行ステージ
+FROM alpine:latest
 WORKDIR /root/
+
+# ビルドステージからバイナリをコピー
 COPY --from=builder /app/main .
+
+# ポート8080を公開
+EXPOSE 8080
+
+# 実行コマンド
 CMD ["./main"]
+

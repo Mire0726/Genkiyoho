@@ -3,4 +3,4 @@ options:
 steps:
   # ビルドステップ
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/your-image', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/genkiyoho', '.']
