@@ -13,12 +13,15 @@ export default function Login() {
   const [registerPassword, setRegisterPassword] = useState('');
   const router = useRouter();
 
+ // バックエンドAPIのベースURL
+  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   // ログイン処理
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       // ログイン処理のAPI呼び出し
-      const { data } = await axios.post('http://localhost:8080/users/login', {
+      const { data } = await axios.post('${backendUrl}/users/login', {
         email: loginEmail,
         password: loginPassword,
       });
