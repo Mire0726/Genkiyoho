@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import styles from './login.module.scss'; // 仮定のスタイルシートのパス
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import styles from "./login.module.scss"; // 仮定のスタイルシートのパス
 
 export default function Login() {
   // ログイン用の状態
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   // 新規登録用の状態
-  const [name, setName] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
+  const [name, setName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
   const router = useRouter();
 
- // バックエンドAPIのベースURL
+  // バックエンドAPIのベースURL
   const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   // ログイン処理
@@ -21,33 +21,38 @@ export default function Login() {
     e.preventDefault();
     try {
       // ログイン処理のAPI呼び出し
-      const { data } = await axios.post('${backendUrl}/users/login', {
+      const { data } = await axios.post("${backendUrl}/users/login", {
         email: loginEmail,
         password: loginPassword,
       });
-      localStorage.setItem('token', data.authtoken); // 認証トークンをローカルストレージに保存
-      router.push('/main'); // メインページにリダイレクト
+      localStorage.setItem("token", data.authtoken); // 認証トークンをローカルストレージに保存
+      router.push("/main"); // メインページにリダイレクト
     } catch (error) {
       console.error(error);
-      alert('ログインに失敗しました。');
+      alert("ログインに失敗しました。");
     }
   };
 
   // 新規登録処理
-  const handleSubmitRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitRegistration = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       // 新規登録処理のAPI呼び出し
-      const { data } = await axios.post('${backendUrl}/users/me', {
-        name,
-        email: registerEmail,
-        password: registerPassword,
-      });
-      alert('登録が完了しました。ログインしてください。');
+      const { data } = await axios.post(
+        "https://genkiyoho-backend-4d41a2876089.herokuapp.com/users/me",
+        {
+          name,
+          email: registerEmail,
+          password: registerPassword,
+        }
+      );
+      alert("登録が完了しました。ログインしてください。");
       // 登録後はログインページにリダイレクト等の処理
     } catch (error) {
       console.error(error);
-      alert('登録に失敗しました。');
+      alert("登録に失敗しました。");
     }
   };
 
@@ -71,7 +76,10 @@ export default function Login() {
         />
         <button type="submit">ログイン</button>
       </form>
-      <form onSubmit={handleSubmitRegistration} className={styles.registrationForm}>
+      <form
+        onSubmit={handleSubmitRegistration}
+        className={styles.registrationForm}
+      >
         <h3>新規登録</h3>
         <input
           type="text"
@@ -97,11 +105,10 @@ export default function Login() {
         <button type="submit">登録</button>
       </form>
       <img
-          src="/cat1.png"
-          alt="Description of image"
-          className={styles.cardImage}
-        />
+        src="/cat1.png"
+        alt="Description of image"
+        className={styles.cardImage}
+      />
     </>
   );
 }
-
