@@ -38,7 +38,7 @@ export default function Login() {
     e.preventDefault();
     try {
       // 新規登録処理のAPI呼び出し
-      const { data } = await axios.post('http://localhost:8080/users/me', {
+      const { data } = await axios.post('${backendUrl}/users/me', {
         name,
         email: registerEmail,
         password: registerPassword,
