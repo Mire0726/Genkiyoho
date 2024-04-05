@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const driverName = "mysql"
+// const driverName = "mysql"
 
 var Conn *sql.DB
 
