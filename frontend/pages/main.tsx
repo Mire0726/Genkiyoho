@@ -28,12 +28,12 @@ export default function Main() {
       handlefetchConditions(token);
     }
   }, [router]);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
   const fetchConditionsDisplay = async (token: string) => {
-    const url = "http://localhost:8080";
     console.log("Fetching conditions...");
     const options: AxiosRequestConfig = {
-      url: `${url}/users/me/condition/today`,
+      url: `${backendUrl}/users/me/condition/today`,
       method: "GET",
       headers: {
         "x-token": token,
@@ -61,10 +61,9 @@ export default function Main() {
   };
 
   const todayPoint = async (token: string) => {
-    const url = "http://localhost:8080";
     console.log("Fetching today's point...");
     const options: AxiosRequestConfig = {
-      url: `${url}/users/me/condition/today/point`,
+      url: `${backendUrl}/users/me/condition/today/point`,
       method: "GET",
       headers: {
         "x-token": token,
@@ -89,10 +88,9 @@ export default function Main() {
   };
 
   const handlefetchConditions = async (token: string) => {
-    const url = "http://localhost:8080";
     console.log("Fetching conditions...");
     const options: AxiosRequestConfig = {
-      url: `${url}/users/me/condition`,
+      url: `${backendUrl}/users/me/condition`,
       method: "GET",
       headers: {
         "x-token": token,

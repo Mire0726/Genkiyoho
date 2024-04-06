@@ -14,14 +14,14 @@ export default function Login() {
   const router = useRouter();
 
   // バックエンドAPIのベースURL
-  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
   // ログイン処理
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       // ログイン処理のAPI呼び出し
-      const { data } = await axios.post("${backendUrl}/users/login", {
+      const { data } = await axios.post(`${backendUrl}/users/login`, {
         email: loginEmail,
         password: loginPassword,
       });
@@ -40,14 +40,11 @@ export default function Login() {
     e.preventDefault();
     try {
       // 新規登録処理のAPI呼び出し
-      const { data } = await axios.post(
-        "https://genkiyoho-backend-4d41a2876089.herokuapp.com/users/me",
-        {
-          name,
-          email: registerEmail,
-          password: registerPassword,
-        }
-      );
+      const { data } = await axios.post(`${backendUrl}/users/me`, {
+        name,
+        email: registerEmail,
+        password: registerPassword,
+      });
       alert("登録が完了しました。ログインしてください。");
       // 登録後はログインページにリダイレクト等の処理
     } catch (error) {

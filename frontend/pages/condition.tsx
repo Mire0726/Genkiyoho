@@ -43,11 +43,11 @@ export default function ConditionRegistration() {
       fetchEnvironmentConditions(token);
     }
   }, [router]);
-
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
   const fetchCycleConditions = async (token: string) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/conditions/cycle",
+        `${backendUrl}/conditions/cycle`,
         {
           headers: {
             "x-token": token,
@@ -64,7 +64,7 @@ export default function ConditionRegistration() {
   const fetchEnvironmentConditions = async (token: string) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/conditions/environment",
+        `${backendUrl}/conditions/environment`,
         {
           headers: {
             "x-token": token,
@@ -100,7 +100,7 @@ export default function ConditionRegistration() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/users/me/condition/cycle",
+        `${backendUrl}/users/me/condition/cycle`,
         {
           condition_id: selectedConditionId,
           start_date: startDate, // 開始日
@@ -138,7 +138,7 @@ export default function ConditionRegistration() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/users/me/condition/environment",
+        `${backendUrl}/users/me/condition/environment`,
         {
           condition_id: selectedConditionId,
           start_date: startDate, // 開始日
