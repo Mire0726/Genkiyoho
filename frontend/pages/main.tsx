@@ -48,7 +48,7 @@ export default function Main() {
         const data = response.data;
         setConditions(data);
       } else {
-        throw new TypeError("Received data is not an array");
+        setConditions([]);
       }
       setErrorMessage("");
     } catch (error) {
@@ -70,22 +70,41 @@ export default function Main() {
       },
     };
 
-    try {
-      const response = await axios(options);
+  //   try {
+  //     const response = await axios(options);
+  //     const genkiHP = response.data;
+  //     console.log(`Today's Genki HP:`, genkiHP);
+  //     setGenkiHP(genkiHP); // コメントを解除して状態を更新
+  //     if (genkiHP <= 50) {
+  //       setTodayMassage("今日はゆっくりめに過ごしましょう");
+  //     }
+  //     setErrorMessage("");
+  //   } catch (error) {
+  //     console.error("Error fetching today's point:", error);
+  //     setErrorMessage(
+  //       "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
+  //     );
+  //   }
+  // };
+  try {
+    const response = await axios(options);
+    if (response.data !== null) {
       const genkiHP = response.data;
       console.log(`Today's Genki HP:`, genkiHP);
-      setGenkiHP(genkiHP); // コメントを解除して状態を更新
+      setGenkiHP(genkiHP);
       if (genkiHP <= 50) {
         setTodayMassage("今日はゆっくりめに過ごしましょう");
       }
-      setErrorMessage("");
-    } catch (error) {
-      console.error("Error fetching today's point:", error);
-      setErrorMessage(
-        "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
-      );
+    } else {
+      // 応答がnullの場合は、genkiHPを初期値または空値に設定
+      setGenkiHP(null);
     }
-  };
+    setErrorMessage("");
+  } catch (error) {
+    console.error("Error fetching today's point:", error);
+    setErrorMessage("情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。");
+  }
+};
 
   const handlefetchConditions = async (token: string) => {
     console.log("Fetching conditions...");
@@ -100,9 +119,13 @@ export default function Main() {
     try {
       const response = await axios(options);
       const data = response.data;
-      console.log("allConditions:", data);
-      setAllConditions(data);
-      setErrorMessage("");
+
+      if (data !==null){
+        setAllConditions(data);
+        setErrorMessage("");
+      } else{
+        setAllConditions([]);
+      }
     } catch (error) {
       console.error("Error fetching conditions:", error);
       setErrorMessage(

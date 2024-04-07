@@ -15,7 +15,7 @@ export default function Login() {
 
   // バックエンドAPIのベースURL
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-  console.log("backendUrl:", backendUrl);
+  
   console.log(process.env)
   // ログイン処理
   const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
