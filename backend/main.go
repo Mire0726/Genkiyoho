@@ -10,16 +10,6 @@ import (
 	
 )
 
-// func main() {
-//     var addr string
-//     flag.StringVar(&addr, "addr", "8080", "Address to listen on")
-//     flag.Parse()
-
-//     // サーバーの起動
-//     server.Serve(addr)
-
-// }
-
 func main() {
 	// 環境変数PORTからポート番号を取得。指定されていない場合はデフォルトで"8080"を使用。
 	var defaultPort = "8080"

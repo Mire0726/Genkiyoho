@@ -69,23 +69,7 @@ export default function Main() {
         "x-token": token,
       },
     };
-
-  //   try {
-  //     const response = await axios(options);
-  //     const genkiHP = response.data;
-  //     console.log(`Today's Genki HP:`, genkiHP);
-  //     setGenkiHP(genkiHP); // コメントを解除して状態を更新
-  //     if (genkiHP <= 50) {
-  //       setTodayMassage("今日はゆっくりめに過ごしましょう");
-  //     }
-  //     setErrorMessage("");
-  //   } catch (error) {
-  //     console.error("Error fetching today's point:", error);
-  //     setErrorMessage(
-  //       "情報の取得中にサーバーでエラーが発生しました。しばらくしてから再度試してください。"
-  //     );
-  //   }
-  // };
+    
   try {
     const response = await axios(options);
     if (response.data !== null) {
